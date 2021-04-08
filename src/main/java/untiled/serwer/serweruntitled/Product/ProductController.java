@@ -145,6 +145,10 @@ public class ProductController {
     public ResponseEntity<?> ExportData(@RequestParam(name = "route" ) String routeExport,@RequestBody List<Product> products){
         return ResponseEntity.ok(productService.ExportData(routeExport,products));
     }
+    @GetMapping("/parcel")
+    public ResponseEntity<?> GetParcelData(){
+        return ResponseEntity.ok(productService.GetParcelData());
+    }
 
 
 

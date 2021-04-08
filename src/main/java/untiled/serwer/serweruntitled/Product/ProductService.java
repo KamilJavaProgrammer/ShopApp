@@ -22,6 +22,7 @@ import untiled.serwer.serweruntitled.Product.Category.CategoryRepository;
 import untiled.serwer.serweruntitled.Product.SubCategory.SubCategory;
 import untiled.serwer.serweruntitled.Product.SubCategory.SubCategoryRepository;
 
+import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import java.io.*;
 import java.net.MalformedURLException;
@@ -578,6 +579,13 @@ public class ProductService extends Thread {
             });
         }
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> GetParcelData() {
+
+       Optional<Product> product =  productRepo.findByProductName("Przesyłka kurierska");
+
+        return ResponseEntity.status(HttpStatus.OK).body(product);
     }
 }
 
