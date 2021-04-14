@@ -8,10 +8,10 @@
 		<version>2.3.3.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>untiled.serwer</groupId>
-	<artifactId>serweruntitled</artifactId>
+	<groupId>ShopAppBackend.serwer</groupId>
+	<artifactId>ShopAppBackend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>serweruntitled</name>
+	<name>ShopAppBackend</name>
 
 	<description>Demo project for Spring Boot</description>
 
