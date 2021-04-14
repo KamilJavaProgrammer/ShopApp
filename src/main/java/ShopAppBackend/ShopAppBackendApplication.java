@@ -17,11 +17,11 @@ import ShopAppBackend.Invoice.InvoiceDTO;
 @EnableAsync
 
 
-public class SerweruntitledApplication {
+public class ShopAppBackendApplication {
 
 
 	public static void main(String[] args) {
-		SpringApplication.run(SerweruntitledApplication.class, args);
+		SpringApplication.run(ShopAppBackendApplication.class, args);
 
 	}
 
