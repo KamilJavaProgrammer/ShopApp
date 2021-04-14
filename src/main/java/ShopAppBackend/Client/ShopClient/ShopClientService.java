@@ -68,9 +68,9 @@ public class ShopClientService {
         {
             throw new IllegalArgumentException();
         }
-
-
     }
+
+
 
     @Transactional
     public ResponseEntity<HttpStatus> DeleteClients(List<ShopClient> shopClients){
@@ -149,8 +149,21 @@ public class ShopClientService {
 
     }
 
-    public Optional<ShopClient> GetOneShopClientFromDatabase(Long id){
-        Optional<ShopClient> shopClient = shopClientRepository.findById(id);
-        return shopClient;
+    public Optional<ShopClient> GetOneShopClientFromDatabase(Long id) throws ShopClientNotFound {
+
+        if(id == null){
+            throw new IllegalArgumentException();
+        }
+        else
+        {
+            Optional<ShopClient> shopClient = shopClientRepository.findById(id);
+            if(shopClient.isPresent()){
+                return shopClient;
+            }
+            else
+            {
+                throw new ShopClientNotFound("error");
+            }
+        }
     }
 }

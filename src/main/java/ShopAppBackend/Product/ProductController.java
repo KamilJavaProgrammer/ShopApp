@@ -81,7 +81,7 @@ public class ProductController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Product>> GetOneProduct(@PathVariable Long id){
+    public ResponseEntity<Optional<Product>> GetOneProduct(@PathVariable Long id) throws ProductNotFound {
         return ResponseEntity.ok(this.productService.GetOneProductFromDatabase(id));
     }
     @GetMapping("/list")

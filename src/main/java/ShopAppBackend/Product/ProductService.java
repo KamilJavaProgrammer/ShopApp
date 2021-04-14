@@ -204,22 +204,19 @@ public class ProductService extends Thread {
 
 
 
-    public Optional<Product> GetOneProductFromDatabase(Long id){
+    public Optional<Product> GetOneProductFromDatabase(Long id) throws ProductNotFound {
 
 
         Optional<Product> product = productRepo.findById(id);
+        if(product.isPresent())
+
         return product;
+
+        else
+        {
+            throw  new ProductNotFound("Product Not Found");
+        }
     }
-
-
-    public Product GetOneProductFromDatabase1(Long id){
-
-
-        return productRepo.getOne(id);
-    }
-
-
-
 
 
     @Transactional

@@ -38,7 +38,7 @@ public class ShopClientController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> GetOneShopClientById(@PathVariable Long id) {
+    public ResponseEntity<?> GetOneShopClientById(@PathVariable Long id) throws ShopClientNotFound {
         return ResponseEntity.ok(shopClientService.GetOneShopClientFromDatabase(id));
     }
 
