@@ -1,6 +1,6 @@
-package ShopAppBackend.Client.ShopClient;
+package ShopAppBackend.ServiceClient.ShopClient;
 
-import ShopAppBackend.Client.Client;
+import ShopAppBackend.ServiceClient.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

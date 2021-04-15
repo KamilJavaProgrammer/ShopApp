@@ -1,7 +1,7 @@
 package ShopAppBackend.CompleteOrder;
 import lombok.*;
 import ShopAppBackend.Adress.Address;
-import ShopAppBackend.Client.ShopClient.ShopClient;
+import ShopAppBackend.ServiceClient.ShopClient.ShopClient;
 import ShopAppBackend.Invoice.Invoice;
 import ShopAppBackend.ProductBasket.ProductBasket;
 

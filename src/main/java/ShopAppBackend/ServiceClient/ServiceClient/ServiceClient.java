@@ -1,9 +1,9 @@
-package ShopAppBackend.Client.ServiceClient;
+package ShopAppBackend.ServiceClient.ServiceClient;
 
 import ShopAppBackend.Device.Device;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import ShopAppBackend.Client.Client;
+import ShopAppBackend.ServiceClient.Client;
 
 import javax.persistence.*;
 import java.util.List;

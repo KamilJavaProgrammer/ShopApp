@@ -3,7 +3,7 @@ package ShopAppBackend.User;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ShopAppBackend.Client.ShopClient.ShopClient;
+import ShopAppBackend.ServiceClient.ShopClient.ShopClient;
 
 import javax.persistence.*;
 import java.util.Collection;

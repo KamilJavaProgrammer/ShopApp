@@ -1,8 +1,8 @@
 package ShopAppBackend.User;
 
 
-import ShopAppBackend.Client.ShopClient.ShopClient;
-import ShopAppBackend.Client.ShopClient.ShopClientRepository;
+import ShopAppBackend.ServiceClient.ShopClient.ShopClient;
+import ShopAppBackend.ServiceClient.ShopClient.ShopClientRepository;
 import ShopAppBackend.Security.FilterJwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

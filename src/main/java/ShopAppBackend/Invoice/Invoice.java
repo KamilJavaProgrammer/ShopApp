@@ -3,8 +3,8 @@ package ShopAppBackend.Invoice;
 
 import ShopAppBackend.ArtcilesOnInvoice.ArticlesOnInvoice;
 import ShopAppBackend.Business.Business;
-import ShopAppBackend.Client.ServiceClient.ServiceClient;
-import ShopAppBackend.Client.ShopClient.ShopClient;
+import ShopAppBackend.ServiceClient.ServiceClient.ServiceClient;
+import ShopAppBackend.ServiceClient.ShopClient.ShopClient;
 import ShopAppBackend.CompleteOrder.CompleteOrder;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package ShopAppBackend.Client;
+package ShopAppBackend.ServiceClient;
 
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;

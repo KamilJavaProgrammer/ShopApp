@@ -1,6 +1,6 @@
-package ShopAppBackend.Client.ShopClient;
+package ShopAppBackend.ServiceClient.ShopClient;
 
-import ShopAppBackend.Client.Client;
+import ShopAppBackend.ServiceClient.Client;
 import ShopAppBackend.CompleteOrder.CompleteOrder;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;

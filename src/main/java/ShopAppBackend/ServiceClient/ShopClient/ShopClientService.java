@@ -1,7 +1,7 @@
-package ShopAppBackend.Client.ShopClient;
+package ShopAppBackend.ServiceClient.ShopClient;
 
 
-import ShopAppBackend.Client.Client;
+import ShopAppBackend.ServiceClient.Client;
 import ShopAppBackend.User.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,14 +35,24 @@ public class ShopClientService {
         this.businessService = businessService;
     }
 
+//
+//    public ResponseEntity<List<ShopClient>> GetAllClient(){
+//        List<ShopClient> clients = shopClientRepository.findAll();
+//        System.out.println(clients);
+//        clients.sort(ShopClient::compareTo);
+//        System.out.println(clients);
+//        return ResponseEntity.status(HttpStatus.OK).body(clients);
+//    }
 
-    public ResponseEntity<?> GetAllClient(){
+    public List<ShopClient> GetAllClient(){
         List<ShopClient> clients = shopClientRepository.findAll();
         System.out.println(clients);
         clients.sort(ShopClient::compareTo);
         System.out.println(clients);
-        return ResponseEntity.status(HttpStatus.OK).body(clients);
+        return clients;
     }
+
+
 
     @Transactional
     public ResponseEntity<HttpStatus> DeleteShopClientById(Long id){

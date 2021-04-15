@@ -1,12 +1,11 @@
-package ShopAppBackend.Client;
+package ShopAppBackend.ShopClient;
 
 import ShopAppBackend.Adress.Address;
 import ShopAppBackend.Adress.AddressRepo;
-import ShopAppBackend.Client.ShopClient.ShopClient;
-import ShopAppBackend.Client.ShopClient.ShopClientNotFound;
-import ShopAppBackend.Client.ShopClient.ShopClientRepository;
-import ShopAppBackend.Client.ShopClient.ShopClientService;
-import com.sun.mail.iap.Response;
+import ShopAppBackend.ServiceClient.ShopClient.ShopClient;
+import ShopAppBackend.ServiceClient.ShopClient.ShopClientNotFound;
+import ShopAppBackend.ServiceClient.ShopClient.ShopClientRepository;
+import ShopAppBackend.ServiceClient.ShopClient.ShopClientService;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
@@ -14,11 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import javax.transaction.Transactional;
 import java.util.*;
 
 

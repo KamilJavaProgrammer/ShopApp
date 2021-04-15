@@ -1,7 +1,7 @@
 package ShopAppBackend.CompleteOrder;
 
 
-import ShopAppBackend.Client.ShopClient.ShopClientRepository;
+import ShopAppBackend.ServiceClient.ShopClient.ShopClientRepository;
 import ShopAppBackend.Invoice.InvoiceService;
 import ShopAppBackend.User.UserRepo;
 import org.modelmapper.ModelMapper;
@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ShopAppBackend.Adress.AddressRepo;
 import ShopAppBackend.Business.BusinessRepo;
-import ShopAppBackend.Client.ShopClient.ShopClient;
+import ShopAppBackend.ServiceClient.ShopClient.ShopClient;
 import ShopAppBackend.Company.Company;
 import ShopAppBackend.Invoice.Invoice;
 import ShopAppBackend.Invoice.InvoiceRepo;

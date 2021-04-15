@@ -1,6 +1,4 @@
-package ShopAppBackend.Client.ShopClient;
-
-import lombok.Data;
+package ShopAppBackend.ServiceClient.ShopClient;
 
 public class ShopClientNotFound extends Throwable {
 

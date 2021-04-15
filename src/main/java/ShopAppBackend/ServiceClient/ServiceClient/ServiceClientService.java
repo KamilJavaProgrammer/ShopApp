@@ -1,4 +1,4 @@
-package ShopAppBackend.Client.ServiceClient;
+package ShopAppBackend.ServiceClient.ServiceClient;
 
 
 import org.springframework.beans.factory.annotation.Autowired;

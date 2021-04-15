@@ -1,4 +1,4 @@
-package ShopAppBackend.Client;
+package ShopAppBackend.ServiceClient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import ShopAppBackend.Adress.Address;
