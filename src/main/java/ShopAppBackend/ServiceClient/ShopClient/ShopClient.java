@@ -19,6 +19,7 @@ public class ShopClient extends Client implements Comparable<ShopClient>{
     private String state;
     private String email;
 
+
     @JsonIgnore
     @OneToMany(mappedBy = "shopclient",fetch = FetchType.LAZY)
     private List<CompleteOrder> completeOrder;

@@ -1,4 +1,4 @@
-package ShopAppBackend.ShopClient;
+package ShopAppBackend.IntegrationTest.Controllers.ShopClientController;
 
 import ShopAppBackend.ServiceClient.ShopClient.ShopClient;
 import ShopAppBackend.ServiceClient.ShopClient.ShopClientController;
@@ -6,6 +6,7 @@ import ShopAppBackend.ServiceClient.ShopClient.ShopClientRepository;
 import ShopAppBackend.ServiceClient.ShopClient.ShopClientService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import liquibase.pro.packaged.S;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -102,9 +103,23 @@ public class ShopClientControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().is(200))
                 .andExpect(MockMvcResultMatchers.jsonPath("$",Matchers.is("NO_CONTENT"))).andReturn();
+    }
 
+
+    @Test
+    @Transactional
+    public void shouldAddSingleShopClient() throws Exception {
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/client/shop")
+                .contentType("application/json")
+                 .content("{\"name\":\"Test\",\"address\":{\"placeOfresident\":\"Kraków\"}}"))
+                 .andDo(MockMvcResultHandlers.print())
+                 .andExpect(MockMvcResultMatchers.status().is(200))
+                 .andExpect(MockMvcResultMatchers.jsonPath("body",Matchers.is("NO_CONTENT"))).andReturn();
 
     }
+
+
 
 
 

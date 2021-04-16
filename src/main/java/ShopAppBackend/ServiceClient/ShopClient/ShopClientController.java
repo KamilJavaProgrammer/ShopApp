@@ -13,7 +13,7 @@ import java.util.List;
 @RequestMapping(value = "/client/shop")
 public class ShopClientController {
 
-    private ShopClientService shopClientService;
+    private final ShopClientService shopClientService;
 
     @Autowired
     public ShopClientController(ShopClientService shopClientService)  {
@@ -35,11 +35,22 @@ public class ShopClientController {
         return shopClientService.DeleteShopClientById(id);
     }
 
+    @PostMapping()
+    public ResponseEntity<?> AddShopClientToDatabase(@RequestBody ShopClient shopClient){
+        return ResponseEntity.ok(shopClientService.AddClientToDatabase(shopClient));
+    }
 
-    //    @PatchMapping("/client")
-//    public ResponseEntity<?> UpdateClientData(@RequestBody Client client) {
-//        return ResponseEntity.ok(clientService.UpdateClientData(client));
-//    }
+
+    @DeleteMapping()
+    public ResponseEntity<?> DeleteClients(@RequestBody List<ShopClient> shopClientList){
+        return ResponseEntity.ok(shopClientService.DeleteClients(shopClientList));
+    }
+
+
+    @PatchMapping()
+    public ResponseEntity<?> UpdateClientData(@RequestBody ShopClient shopClient) {
+        return ResponseEntity.ok(shopClientService.UpdateClientData(shopClient));
+    }
 
 
 //    @GetMapping("/client")
@@ -55,13 +66,6 @@ public class ShopClientController {
 
 
 
-   @PostMapping()
-    public ResponseEntity<?> AddShopClientToDatabase(@Valid  @RequestBody ShopClient shopClient){
-        return ResponseEntity.ok(shopClientService.AddClientToDatabase(shopClient));
-   }
 
-   @DeleteMapping()
-    public ResponseEntity<?> DeleteClients(@RequestBody List<ShopClient> shopClientList){
-        return ResponseEntity.ok(shopClientService.DeleteClients(shopClientList));
-   }
+
 }

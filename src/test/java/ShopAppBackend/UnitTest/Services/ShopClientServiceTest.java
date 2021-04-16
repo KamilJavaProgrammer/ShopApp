@@ -1,4 +1,4 @@
-package ShopAppBackend.ShopClient;
+package ShopAppBackend.UnitTest.Services;
 
 import ShopAppBackend.Adress.Address;
 import ShopAppBackend.Adress.AddressRepo;

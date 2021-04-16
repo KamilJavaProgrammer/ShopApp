@@ -16,7 +16,7 @@ public abstract class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "Name doesnt empty")
+//    @NotEmpty(message = "Name doesnt empty")
     private String name;
     private String surname;
     private String phoneNumber;

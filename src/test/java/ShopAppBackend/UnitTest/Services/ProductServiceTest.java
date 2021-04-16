@@ -1,5 +1,9 @@
-package ShopAppBackend.Product;
+package ShopAppBackend.UnitTest.Services;
 
+import ShopAppBackend.Product.Product;
+import ShopAppBackend.Product.ProductNotFound;
+import ShopAppBackend.Product.ProductRepo;
+import ShopAppBackend.Product.ProductService;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;

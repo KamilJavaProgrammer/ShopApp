@@ -93,24 +93,24 @@ public class ShopClientService {
 
 
 
-//    @Transactional
-//    public HttpStatus UpdateClientData(Client client) {
-//
-//        Client client1 = clientRepository.getOne(client.getId());
-//
-//        client1.setName(client.getName());
-//        client1.setSurname(client.getSurname());
-////        client1.setEmail(client.getEmail());
-//        client1.setPhoneNumber(client.getPhoneNumber());
-//
-//          addressService.SaveAddressToDatabase(client.getBusiness().getAddress());
-//          addressService.SaveAddressToDatabase(client.getAddress());
-//          businessService.SaveBusinnesToDatabase(client.getBusiness());
-//
-//        clientRepository.save(client);
-//
-//        return HttpStatus.NO_CONTENT;
-//    }
+    @Transactional
+    public  ResponseEntity<HttpStatus> UpdateClientData(ShopClient shopClient) {
+
+        ShopClient shopClient1 = shopClientRepository.getOne(shopClient.getId());
+
+        shopClient1.setName(shopClient.getName());
+        shopClient1.setSurname(shopClient.getSurname());
+        shopClient1.setEmail(shopClient.getEmail());
+        shopClient1.setPhoneNumber(shopClient.getPhoneNumber());
+
+          addressService.SaveAddressToDatabase(shopClient.getBusiness().getAddress());
+          addressService.SaveAddressToDatabase(shopClient.getAddress());
+          businessService.SaveBusinnesToDatabase(shopClient.getBusiness());
+
+        shopClientRepository.save(shopClient1);
+
+        return  ResponseEntity.ok(HttpStatus.NO_CONTENT);
+    }
 
 
 
@@ -176,4 +176,6 @@ public class ShopClientService {
             }
         }
     }
+
+
 }
