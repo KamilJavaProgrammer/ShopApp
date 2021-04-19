@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
+import java.net.http.HttpResponse;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
@@ -71,10 +72,9 @@ public class ProductController {
 
 
    @PostMapping("/name")
-    public ResponseEntity<List<Product>> GetProductList(@RequestPart(name = "path",required = true) String path,
-                                                        @RequestPart(name = "sortWay",required = false) String sortWay){
+    public ResponseEntity<?> GetProductList(@RequestPart(name = "path") String path){
 
-        return ResponseEntity.ok(productService.GetMainProducts(path.toLowerCase(),sortWay.toLowerCase()));
+        return ResponseEntity.ok(productService.GetMainProducts(path.toLowerCase()));
 
       }
 
@@ -148,6 +148,11 @@ public class ProductController {
         return ResponseEntity.ok(productService.GetParcelData());
     }
 
+
+    @GetMapping("/search")
+    public ResponseEntity<?> GetSearchingProducts(@RequestParam(value = "searchText") String searchText){
+        return ResponseEntity.ok(productService.GetAllBySearch(searchText));
+    }
 
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

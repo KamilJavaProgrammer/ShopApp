@@ -436,29 +436,29 @@ public class ProductService extends Thread {
 
 
 
-    public List<Product>  GetMainProducts(String path,String sortWay) {
+    public ResponseEntity<List<Product>>  GetMainProducts(String path) {
 
         if(path != null) {
 
             String[] data = path.split("/");
 
             if (data.length == 1) {
-                return Sorting(this.productRepo.GetMainItems(data[0]),sortWay);
+                return ResponseEntity.status(HttpStatus.OK).body(this.productRepo.GetMainItems(data[0]));
                 }
 
             else if (data.length == 2) {
 
-                return Sorting(productRepo.GetMainItems(data[0]).stream().
-                        filter(product -> product.getProductSubCategory().toLowerCase().equals(data[1].toLowerCase())).collect(Collectors.toList()),sortWay);
 
+                   return ResponseEntity.status(HttpStatus.OK).body( productRepo.GetMainItems(data[0]).stream().
+                           filter(product -> product.getProductSubCategory().toLowerCase().equals(data[1].toLowerCase())).collect(Collectors.toList()));
                 }
 
             else {
 
-
-                return Sorting(productRepo.GetMainItems(data[0]).stream().
+                return ResponseEntity.status(HttpStatus.OK).body(productRepo.GetMainItems(data[0]).stream().
                         filter(product -> product.getProductSubCategory().toLowerCase().equals(data[1].toLowerCase())).
-                        filter(product -> product.getManufacturer().toLowerCase().equals(data[2].toLowerCase())).collect(Collectors.toList()),sortWay);
+                        filter(product -> product.getManufacturer().toLowerCase().equals(data[2].toLowerCase())).collect(Collectors.toList()));
+
                  }
              }
 
@@ -469,32 +469,14 @@ public class ProductService extends Thread {
     }
 
 
-    public List<Product> Sorting(List<Product> products,String sortWay){
 
 
-        if(sortWay.equals("alphabetically"))
-        {
-           products.sort(Product::compareTo);
-           return products;
 
-        }
-       else if(sortWay.equals("ascending")) {
-            System.out.println(products);
-            products.sort(Product::compareToPrice);
-            System.out.println(products);
-
-            return products;
-        }
-       else
-           return products;
-    }
-
-
-      public List<Product> GetAllBySearch(String searchText){
+      public ResponseEntity<List<Product>> GetAllBySearch(String searchText){
 
      List<Product> productEntities = productRepo.findAllByManufacturerContainingOrProductNameContaining(searchText,searchText);
      productEntities.sort(Product::compareTo);
-      return productEntities;
+      return ResponseEntity.status(HttpStatus.OK).body(productEntities);
    }
 
 

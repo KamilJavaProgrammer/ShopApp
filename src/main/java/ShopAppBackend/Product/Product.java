@@ -1,4 +1,5 @@
 package ShopAppBackend.Product;
+import ShopAppBackend.FrontMainPageManagement.ArticleLine.ArticleLine;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.Proxy;
@@ -6,6 +7,8 @@ import ShopAppBackend.Product.Category.Category;
 import ShopAppBackend.Product.SubCategory.SubCategory;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name="products")
@@ -40,6 +43,11 @@ public class Product implements Comparable<Product> {
     @ManyToOne
     @JoinColumn(name = "categoryid")
     private Category category1;
+
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "productList")
+    private Set<ArticleLine> articleLineList;
 
     @Transient
     private int quantity;
