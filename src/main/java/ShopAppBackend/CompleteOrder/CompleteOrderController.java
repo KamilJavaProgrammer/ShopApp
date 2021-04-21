@@ -24,7 +24,7 @@ public class CompleteOrderController {
     }
 
     @GetMapping("/order")
-    public ResponseEntity<List<CompleteOrder>> GetAllOrdersByUserId(@AuthenticationPrincipal UsernamePasswordAuthenticationToken user) {
+    public ResponseEntity<?> GetAllOrdersForUser(@AuthenticationPrincipal UsernamePasswordAuthenticationToken user) {
         return ResponseEntity.ok(completeOrderService.GetAllOrdersByUser(user.getName()));
     }
 

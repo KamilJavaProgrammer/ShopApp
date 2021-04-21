@@ -1,6 +1,9 @@
 package ShopAppBackend;
 
 import ShopAppBackend.CompleteOrder.CompleteOrder;
+import ShopAppBackend.ServiceClient.ShopClient.ShopClient;
+import ShopAppBackend.User.User;
+import ShopAppBackend.User.UserDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.boot.SpringApplication;
@@ -74,6 +77,23 @@ public class ShopAppBackendApplication {
 				map().setSumBruttoValue(source.getSumBruttoValue());
 			}
 
+		});
+
+		modelMapper.addMappings(new PropertyMap<User, UserDto>() {
+			@Override
+			protected void configure() {
+
+				map().setId(source.getId());
+				map().setUsername(source.getUsername());
+				map().setEmail(source.getEmail());
+				map().setRole(source.getRole());
+				map().setAuthorization(source.isAuthorization());
+				map().setShopClient(source.getShopClient());
+				map().setPassword(source.getPassword());
+				map().setCodeVerification(source.getCodeVerification());
+				map().setPassword1(source.getPassword1());
+
+			}
 		});
 		return modelMapper;
 	}

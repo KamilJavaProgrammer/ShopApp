@@ -7,6 +7,7 @@ import ShopAppBackend.User.UserRepo;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ShopAppBackend.Adress.AddressRepo;
 import ShopAppBackend.Business.BusinessRepo;
@@ -183,14 +184,13 @@ public class CompleteOrderService {
 
 
 
-   public List<CompleteOrder> GetAllOrdersByUser(String login){
+   public ResponseEntity<List<CompleteOrder>> GetAllOrdersByUser(String username){
 
-        if(login!=null)
+        if(username!=null)
         {
-            Long userId = userRepo.getUserId(login);
-            Long clientId = userRepo.getClientId(userId);
+            Long clientId = userRepo.getClientIdByUserUsername(username);
             List<CompleteOrder> orders = completeOrderRepository.getAllOrder(clientId);
-            return (orders != null) ? orders : Collections.emptyList();
+            return ResponseEntity.status(HttpStatus.OK).body(orders);
         }
         else
         {

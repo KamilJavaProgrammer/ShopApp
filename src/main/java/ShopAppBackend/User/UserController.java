@@ -58,6 +58,11 @@ public class UserController  {
         return ResponseEntity.ok(user.getName());
   }
 
+    @GetMapping("/user")
+    public ResponseEntity<?> GetUser(@AuthenticationPrincipal UsernamePasswordAuthenticationToken user) throws UserNotFoundException {
+        return ResponseEntity.ok(userService.GetUserByName(user.getName()));
+    }
+
 
 
 

@@ -19,6 +19,8 @@ public class Business  {
     private String nip;
     private String account;
     private String email;
+    private String regon;
+    private String phoneNumber;
 
 
     @OneToOne

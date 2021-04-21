@@ -1,7 +1,10 @@
 package ShopAppBackend.ServiceClient.ShopClient;
 
 
+import ShopAppBackend.Adress.Address;
+import ShopAppBackend.Business.Business;
 import ShopAppBackend.ServiceClient.Client;
+import ShopAppBackend.User.User;
 import ShopAppBackend.User.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,14 +29,27 @@ public class ShopClientService {
     private final AddressService addressService;
     private final BusinessService businessService;
 
+
     @Autowired
-    public ShopClientService(ShopClientRepository shopClientRepository, UserRepo userRepo, AddressRepo addressRepo, AddressService addressService, BusinessService businessService) {
+    public ShopClientService(ShopClientRepository shopClientRepository, UserRepo userRepo, AddressRepo addressRepo, AddressService addressService, BusinessService businessService, AddressService addressService1) {
         this.shopClientRepository = shopClientRepository;
         this.userRepo = userRepo;
         this.addressRepo = addressRepo;
         this.addressService = addressService;
         this.businessService = businessService;
     }
+
+    public ShopClient CreateNewShopClient(User user){
+
+        ShopClient shopClient = new ShopClient();
+        shopClient.setEmail(user.getEmail());
+        shopClient.setState("Zarejestrowany");
+        shopClient.setAddress(addressService.CreateNewAddress("Wysyłkowy"));
+        shopClient.setBusiness(businessService.CreateNewBusiness());
+        shopClientRepository.save(shopClient);
+        return shopClient;
+    }
+
 
 //
 //    public ResponseEntity<List<ShopClient>> GetAllClient(){
@@ -94,22 +110,19 @@ public class ShopClientService {
 
 
     @Transactional
-    public  ResponseEntity<HttpStatus> UpdateClientData(ShopClient shopClient) {
+    public  ResponseEntity<ShopClient> UpdateClientData(ShopClient shopClient,String username) {
 
-        ShopClient shopClient1 = shopClientRepository.getOne(shopClient.getId());
+        ShopClient shopClientInstant = shopClientRepository.getOne(userRepo.getClientIdByUserUsername(username));
 
-        shopClient1.setName(shopClient.getName());
-        shopClient1.setSurname(shopClient.getSurname());
-        shopClient1.setEmail(shopClient.getEmail());
-        shopClient1.setPhoneNumber(shopClient.getPhoneNumber());
+        shopClientInstant.setName(shopClient.getName());
+        shopClientInstant.setSurname(shopClient.getSurname());
+        shopClientInstant.setEmail(shopClient.getEmail());
+        shopClientInstant.setPhoneNumber(shopClient.getPhoneNumber());
+        shopClientInstant.setAddress(addressService.SaveAddressToDatabase(shopClient.getAddress()));
+        shopClientInstant.setBusiness(businessService.SaveBusinnesToDatabase(shopClient.getBusiness()));
+        shopClientRepository.save(shopClientInstant);
 
-          addressService.SaveAddressToDatabase(shopClient.getBusiness().getAddress());
-          addressService.SaveAddressToDatabase(shopClient.getAddress());
-          businessService.SaveBusinnesToDatabase(shopClient.getBusiness());
-
-        shopClientRepository.save(shopClient1);
-
-        return  ResponseEntity.ok(HttpStatus.NO_CONTENT);
+        return  ResponseEntity.status(HttpStatus.OK).body(shopClient);
     }
 
 
@@ -178,4 +191,7 @@ public class ShopClientService {
     }
 
 
+    public ResponseEntity<ShopClient> GetOneClientByTokenJwt() {
+        return null;
+    }
 }

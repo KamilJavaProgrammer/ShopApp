@@ -1,15 +1,23 @@
 package ShopAppBackend.User;
 
 
+import ShopAppBackend.Adress.Address;
+import ShopAppBackend.Adress.AddressRepo;
+import ShopAppBackend.Business.Business;
 import ShopAppBackend.ServiceClient.ShopClient.ShopClient;
 import ShopAppBackend.ServiceClient.ShopClient.ShopClientRepository;
 import ShopAppBackend.Security.FilterJwt;
+import ShopAppBackend.ServiceClient.ShopClient.ShopClientService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Example;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -20,6 +28,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.util.*;
 
@@ -35,13 +44,19 @@ public class UserService  {
     public static String name = "";
    public  String codeVerification;
    public ShopClientRepository shopClientRepository;
+   public ShopClientService shopClientService;
+
+   public ModelMapper modelMapper;
+   private ObjectMapper objectMapper;
+   private AddressRepo addressRepo;
 
 
 
     @Autowired
     public UserService(@Value("${jwt.secret}")String secret, @Value("${jwt.token.expirationTime}") long expirationTime,
                        UserRepo userRepo, JavaMailSender javaMailSender, PasswordEncoder passwordEncoder,
-                       ShopClientRepository shopClientRepository) {
+                       ShopClientRepository shopClientRepository, ModelMapper modelMapper, ObjectMapper objectMapper,
+                       AddressRepo addressRepo,ShopClientService shopClientService) {
 
         this.expirationTime = expirationTime;
         this.secret = secret;
@@ -49,6 +64,10 @@ public class UserService  {
         this.javaMailSender = javaMailSender;
         this.passwordEncoder = passwordEncoder;
         this.shopClientRepository = shopClientRepository;
+        this.modelMapper = modelMapper;
+        this.objectMapper = objectMapper;
+        this.addressRepo = addressRepo;
+        this.shopClientService = shopClientService;
 
     }
 
@@ -101,14 +120,7 @@ public class UserService  {
 
                     user.setAuthorization(false);
                     user.setRole("USER");
-
-                    ShopClient client = new ShopClient();
-
-                    client.setEmail(user.getEmail());
-                    client.setState("Zarejestrowany");
-                    shopClientRepository.save(client);
-
-                    user.setShopClient(client);
+                    user.setShopClient(shopClientService.CreateNewShopClient(user));
 
                     this.codeVerification = this.GenerateRandomKey();
                     user.setCodeVerification(codeVerification);
@@ -156,7 +168,7 @@ public class UserService  {
       String codeFromUser = user.getCodeVerification();
       String codeVerification = user1.getCodeVerification();
 
-      if(codeFromUser.equals(codeVerification)==true)
+      if(codeFromUser.equals(codeVerification))
       {
           user1.setAuthorization(true);
           userRepo.save(user1);
@@ -222,8 +234,17 @@ public class UserService  {
     }
 
 
-    public User GetUserByName(String name){
-       return userRepo.findByUsername(name);
+    public ResponseEntity<UserDto> GetUserByName(String username) throws UserNotFoundException {
+        User user = userRepo.findByUsername(username);
+        if(user != null){
+           UserDto userDto = modelMapper.map(user,UserDto.class);
+           return ResponseEntity.status(HttpStatus.OK).body(userDto);
+        }
+        else
+        {
+            throw new UserNotFoundException("User Not found in database");
+        }
+
     }
 
 }

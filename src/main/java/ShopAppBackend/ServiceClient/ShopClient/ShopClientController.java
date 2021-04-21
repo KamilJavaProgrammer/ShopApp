@@ -3,14 +3,17 @@ package ShopAppBackend.ServiceClient.ShopClient;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping(value = "/client/shop")
+@RequestMapping(value = "/shop/client")
 public class ShopClientController {
 
     private final ShopClientService shopClientService;
@@ -21,7 +24,21 @@ public class ShopClientController {
     }
 
 
-    @GetMapping()
+
+
+    @GetMapping("")
+    public ResponseEntity<?> GetOneClientByTokenJwt(@AuthenticationPrincipal UsernamePasswordAuthenticationToken user) {
+        System.out.println(user.getName());
+        System.out.println(user.getPrincipal());
+        System.out.println(user.getAuthorities());
+        System.out.println(user.getCredentials());
+        return ResponseEntity.ok(shopClientService.GetOneClientByTokenJwt());
+    }
+
+
+
+
+    @GetMapping("/all")
     public ResponseEntity<?> GetAllClientsByShop() {
         return ResponseEntity.ok(shopClientService.GetAllClient());
     }
@@ -48,8 +65,8 @@ public class ShopClientController {
 
 
     @PatchMapping()
-    public ResponseEntity<?> UpdateClientData(@RequestBody ShopClient shopClient) {
-        return ResponseEntity.ok(shopClientService.UpdateClientData(shopClient));
+    public ResponseEntity<?> UpdateClientData(@RequestBody ShopClient shopClient, @AuthenticationPrincipal UsernamePasswordAuthenticationToken user) {
+        return ResponseEntity.ok(shopClientService.UpdateClientData(shopClient,user.getName()));
     }
 
 

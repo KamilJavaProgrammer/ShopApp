@@ -24,10 +24,10 @@ public class BusinessServiceTest {
 
 
 
-    @Test
-    public void SaveBusinessToDatabase1_businessNull_throwsNullPointerException(){
-        BusinessService businessService  = new BusinessService(businessRepo);
-        Assertions.assertThrows(NullPointerException.class,()->businessService.SaveBusinnesToDatabase(business));
-    }
+//    @Test
+//    public void SaveBusinessToDatabase1_businessNull_throwsNullPointerException(){
+//        BusinessService businessService  = new BusinessService(businessRepo);
+//        Assertions.assertThrows(NullPointerException.class,()->businessService.SaveBusinnesToDatabase(business));
+//    }
 
 }

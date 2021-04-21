@@ -16,10 +16,7 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
-    @Transient
-    private String name;
-    @Transient
-    private String surname;
+
     private String username;
 
     private String password;
