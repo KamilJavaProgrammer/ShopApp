@@ -30,11 +30,11 @@ public class ArticleLineService {
     public ResponseEntity<HttpStatus> AddOneArticleLineToDatabase(){
 
         ArticleLine articleLine = new ArticleLine();
-        articleLine.setName("Upierdolone");
+        articleLine.setName("Popularne");
 
         List<Product> products = new ArrayList<>();
 //        products.add(productRepo.getOne(2L));
-        products.add(productRepo.getOne(3L));
+        products.add(productRepo.getOne(1L));
 //        products.add(productRepo.getOne(4L));
         articleLine.setProductList(products);
         articleLineRepository.save(articleLine);
