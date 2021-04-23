@@ -38,5 +38,11 @@ public class SectionController {
         return ResponseEntity.ok(sectionService.AddOneSectionToDatabase(section));
     }
 
+    @DeleteMapping("/section/{id}")
+    public ResponseEntity<?> DeleteSectionById(@PathVariable Integer id){
+
+        return ResponseEntity.ok(sectionService.DeleteOneSectionById(id));
+    }
+
 
 }

@@ -76,6 +76,16 @@ public class SectionService {
             throw new IllegalArgumentException();
         }
     }
+
+
+
+    @Transactional
+    public ResponseEntity<HttpStatus> DeleteOneSectionById(Integer id){
+
+        sectionRepository.deleteById(id);
+
+        return ResponseEntity.ok(HttpStatus.NO_CONTENT);
+    }
 }
 
 
