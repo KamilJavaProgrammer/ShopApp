@@ -4,6 +4,7 @@ package ShopAppBackend.CompleteOrder;
 import ShopAppBackend.ServiceClient.ShopClient.ShopClientRepository;
 import ShopAppBackend.Invoice.InvoiceService;
 import ShopAppBackend.User.UserRepo;
+import com.auth0.jwt.JWT;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Date;
@@ -62,12 +64,20 @@ public class CompleteOrderService {
 
 
     public boolean CheckExistsClient(ShopClient shopClient){
-        System.out.println(shopClient);
-        System.out.println(shopClient);
-        System.out.println(shopClient);
-        return shopClientRepository.existsShopClientByNameAndSurnameAndEmail(shopClient.getName(),
+       return shopClientRepository.existsShopClientByNameAndSurnameAndEmail(shopClient.getName(),
                 shopClient.getSurname(),
                 shopClient.getEmail());
+    }
+
+
+
+    public void AddNoRegisterShopClient(CompleteOrder completeOrder){
+        completeOrder.getShopclient().setState("Niezarejestrowany");
+        addressRepo.save(completeOrder.getShopclient().getAddress());
+        addressRepo.save(completeOrder.getShopclient().getBusiness().getAddress());
+        businessRepo.save(completeOrder.getShopclient().getBusiness());
+        shopClientRepository.save(completeOrder.getShopclient());
+
     }
 
 
@@ -83,41 +93,33 @@ public class CompleteOrderService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
         completeOrder.setDate(simpleDateFormat.format(date));
 
+         if(completeOrder.getToken() == null)
+         {
+           AddNoRegisterShopClient(completeOrder);
+         }
+         else
+         {
+             if(JWT.decode(completeOrder.getToken()).getExpiresAt().before(Date.from(Instant.now()))){
 
+                 if(CheckExistsClient(completeOrder.getShopclient()))
+                 {
+                     ShopClient shopClient = this.shopClientRepository.findByNameAndSurnameAndEmail(completeOrder.getShopclient().getName(),
+                             completeOrder.getShopclient().getSurname(),
+                             completeOrder.getShopclient().getEmail());
+                             completeOrder.setShopclient(shopClient);
+                 }
 
+                 else
 
+                 {
+                     AddNoRegisterShopClient(completeOrder);
+                 }
 
-            if(CheckExistsClient(completeOrder.getShopclient()))
-            {
-                ShopClient shopClient = this.shopClientRepository.findByNameAndSurnameAndEmail(completeOrder.getShopclient().getName(),
-                                                                                   completeOrder.getShopclient().getSurname(),
-                                                                                   completeOrder.getShopclient().getEmail());
-                completeOrder.setShopclient(shopClient);
-            }
-            else
+             }
 
-            {
+         }
 
-                if (completeOrder.isToken())
-                {
-                    completeOrder.getShopclient().setState("Zarejestrowany");
-                }
-                else
-                    {
-                    completeOrder.getShopclient().setState("Niezarejestrowany");
-                   }
-
-
-                   addressRepo.save(completeOrder.getShopclient().getAddress());
-                   addressRepo.save(completeOrder.getShopclient().getBusiness().getAddress());
-                   businessRepo.save(completeOrder.getShopclient().getBusiness());
-                   shopClientRepository.save(completeOrder.getShopclient());
-
-            }
-
-
-
-            addressRepo.save(completeOrder.getAddress());
+                  addressRepo.save(completeOrder.getAddress());
 
 
 

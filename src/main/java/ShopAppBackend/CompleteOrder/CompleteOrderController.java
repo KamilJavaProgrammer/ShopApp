@@ -1,4 +1,5 @@
 package ShopAppBackend.CompleteOrder;
+import ShopAppBackend.Security.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ public class CompleteOrderController {
     @Autowired
     public CompleteOrderController(CompleteOrderService completeOrderService) {
         this.completeOrderService = completeOrderService;
+
     }
 
     @GetMapping("/order")
@@ -35,8 +37,6 @@ public class CompleteOrderController {
 
     @PostMapping("/order")
     public ResponseEntity<HttpStatus> TakeOrder(@RequestBody CompleteOrder completeOrder) throws IOException, SQLException {
-        System.out.println("dupa");
-        System.out.println(completeOrder);
         return ResponseEntity.ok(completeOrderService.AddOrderToDatabase(completeOrder));
     }
 

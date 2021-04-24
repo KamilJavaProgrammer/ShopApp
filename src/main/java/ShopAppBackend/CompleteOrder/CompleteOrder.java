@@ -42,7 +42,7 @@ public class CompleteOrder implements Comparable<CompleteOrder> {
     private List<ProductBasket> productsBasket;
 
     @Transient
-    private boolean token;
+    private String token;
 
     public CompleteOrder() {
     }
