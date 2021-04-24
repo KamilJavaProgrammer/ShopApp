@@ -39,7 +39,7 @@ public class ProductController {
                                                     @RequestParam(name = "status") String status,
                                                     @RequestParam(name = "description") String description,
                                                     @RequestParam(name = "placeWarehouse") String placeWarehouse,
-                                                    @RequestParam(value = "fileupload") MultipartFile file ){
+                                                    @RequestParam(value = "fileupload" ,required = false) MultipartFile file  ){
 
 
 

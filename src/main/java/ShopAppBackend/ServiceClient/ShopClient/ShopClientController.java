@@ -28,11 +28,8 @@ public class ShopClientController {
 
     @GetMapping("")
     public ResponseEntity<?> GetOneClientByTokenJwt(@AuthenticationPrincipal UsernamePasswordAuthenticationToken user) {
-        System.out.println(user.getName());
-        System.out.println(user.getPrincipal());
-        System.out.println(user.getAuthorities());
-        System.out.println(user.getCredentials());
-        return ResponseEntity.ok(shopClientService.GetOneClientByTokenJwt());
+
+        return ResponseEntity.ok(shopClientService.GetOneClientByTokenJwt(user.getName()));
     }
 
 

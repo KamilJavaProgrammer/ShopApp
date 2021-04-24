@@ -191,7 +191,10 @@ public class ShopClientService {
     }
 
 
-    public ResponseEntity<ShopClient> GetOneClientByTokenJwt() {
-        return null;
+    public ResponseEntity<ShopClient> GetOneClientByTokenJwt(String username) {
+        ShopClient shopClientInstant = shopClientRepository.getOne(userRepo.getClientIdByUserUsername(username));
+
+        return ResponseEntity.status(HttpStatus.OK).body(shopClientInstant);
+
     }
 }

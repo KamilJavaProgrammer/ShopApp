@@ -64,58 +64,54 @@ public class ProductService extends Thread {
     @Transactional
     public HttpStatus AddProductToDatabase (String productCategory, String productSubCategory, String productName, String manufacturer, String serialNumber,
                                             String model, String productPrice, Integer numberOfItems, String location,
-                                            String cod, String status, String description,String placeWarehouse,  MultipartFile file){
+                                            String cod, String status, String description,String placeWarehouse,  MultipartFile file) {
 
 
-        if(!productRepo.existsByProductName(productName)){
+        if (!productRepo.existsByProductName(productName)) {
 
             try {
-                if(file != null) {
+                if (file != null) {
                     File oFile = new File("C:/ZdjęciaBaza/Upload/" + file.getOriginalFilename());
                     OutputStream os = new FileOutputStream(oFile);
                     InputStream inputStream = file.getInputStream();
                     IOUtils.copy(inputStream, os);
                     os.close();
                     inputStream.close();
-                }
-                else
-                {
+                } else {
                     System.out.println("file is null");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            } finally {
 
 
-            if(!categoryRepository.existsByName(productCategory)) {
-                Category category = new Category();
-                category.setName(productCategory.toLowerCase());
-                this.categoryRepository.save(category);
+                if (!categoryRepository.existsByName(productCategory)) {
+                    Category category = new Category();
+                    category.setName(productCategory.toLowerCase());
+                    this.categoryRepository.save(category);
 
-                this.Test(category, productCategory,  productSubCategory, productName,  manufacturer,  serialNumber,
-                        model, productPrice, numberOfItems, location,
-                        cod, status, description,placeWarehouse, file);
-            }
+                    this.Test(category, productCategory, productSubCategory, productName, manufacturer, serialNumber,
+                            model, productPrice, numberOfItems, location,
+                            cod, status, description, placeWarehouse, file);
+                } else {
+                    Category category = this.categoryRepository.findByName(productCategory);
 
-            else
-            {
-                Category category = this.categoryRepository.findByName(productCategory);
+                    this.Test(category, productCategory, productSubCategory, productName, manufacturer, serialNumber,
+                            model, productPrice, numberOfItems, location,
+                            cod, status, description, placeWarehouse, file);
 
-                this.Test(category, productCategory,  productSubCategory, productName,  manufacturer,  serialNumber,
-                        model, productPrice, numberOfItems, location,
-                        cod, status, description,placeWarehouse, file);
-
+                }
             }
 
 
             logger.info("Add product to database");
             return HttpStatus.OK;
         }
-        else
-        {
+        else {
             logger.warn("Product exists");
             return HttpStatus.NOT_ACCEPTABLE;
         }
+
     }
 
 
