@@ -71,32 +71,43 @@ public class UserService  {
 
     }
 
-    public ResponseEntity<String> LoginAndGenJsonWebToken(User user) throws IOException{
+    public ResponseEntity<String>GenJsonWebToken(User user,User user1) throws IOException {
+        if (passwordEncoder.matches(user.getPassword(), user1.getPassword())) {
+
+            String token = JWT.create()
+                    .withSubject(user1.getUsername())
+                    .withClaim("role",user1.getRole())
+                    .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))
+                    .sign(Algorithm.HMAC256(secret));
+
+
+            logger.info("Sucessfull Generate JWT");
+            FilterJwt.SaveToFile("Sucessfull Generate JWT from user" + user1.getUsername());
+
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(token);
+
+        }
+        else
+        {
+            logger.warn("Wrong login or password");
+            FilterJwt.SaveToFile("Wrong login or password");
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("WrongLoginOrPassword");
+        }
+    }
+
+    public ResponseEntity<String> LoginAdminAndGenJsonWebToken(User user) throws IOException{
         if (userRepo.existsUserByUsername(user.getUsername())) {
 
             User user1 = userRepo.findByUsername(user.getUsername());
-
-
-            if (passwordEncoder.matches(user.getPassword(), user1.getPassword())) {
-
-                String token = JWT.create()
-                             .withSubject(user1.getUsername())
-                             .withClaim("role",user1.getRole())
-                             .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))
-                             .sign(Algorithm.HMAC256(secret));
-
-
-                logger.info("Sucessfull Generate JWT");
-                FilterJwt.SaveToFile("Sucessfull Generate JWT from user" + user1.getUsername());
-
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(token);
-
+            if(user1.getRole().equals("ADMIN")){
+                return GenJsonWebToken(user,user1);
             }
             else
-                {
-                    logger.warn("Wrong login or password");
-                    FilterJwt.SaveToFile("Wrong login or password");
-                    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("WrongLoginOrPassword");
+
+            {
+                logger.info("User don't be ADMIN");
+                FilterJwt.SaveToFile("User don't be ADMIN" + user1.getUsername());
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("FORBIDDEN");
             }
         }
         else
@@ -108,6 +119,29 @@ public class UserService  {
 
         }
     }
+
+
+
+
+    public ResponseEntity<String> LoginAndGenJsonWebToken(User user) throws IOException{
+        if (userRepo.existsUserByUsername(user.getUsername())) {
+
+            User user1 = userRepo.findByUsername(user.getUsername());
+            return GenJsonWebToken(user,user1);
+        }
+        else
+        {
+            logger.warn("User dont exists");
+            FilterJwt.SaveToFile("Failed Attempt Login User" + user.getUsername() + "." + "User dont exists");
+//            return HttpStatus.valueOf("UserDontExists");
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("UserDontExists");
+
+        }
+    }
+
+
+
+
 
 
 

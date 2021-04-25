@@ -42,6 +42,12 @@ public class UserController  {
       return ResponseEntity.ok(userService.LoginAndGenJsonWebToken(user));
   }
 
+
+    @PostMapping("/login/admin")
+    public ResponseEntity LoginAdmin(@RequestBody User user) throws IOException{
+        return ResponseEntity.ok(userService.LoginAdminAndGenJsonWebToken(user));
+    }
+
   @PatchMapping("/changePassword")
   public ResponseEntity<String> SendCodeForChangePassword(@RequestBody User user ) throws MessagingException, IOException, InterruptedException {
      userService.SendCodeForChangePassword(user);
