@@ -27,6 +27,9 @@ public class Business  {
     @JoinColumn(name = "address_id")
     private Address address;
 
-    @OneToMany(mappedBy = "business")
+    @ManyToMany(mappedBy = "business")
     private List<Invoice> invoices;
+
+//    @OneToMany(mappedBy = "business")
+//    private List<Invoice> invoices;
 }

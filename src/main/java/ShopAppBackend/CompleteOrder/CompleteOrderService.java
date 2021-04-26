@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -158,7 +159,8 @@ public class CompleteOrderService {
 
 
                   invoice.setShopClient(completeOrder.getShopclient());
-                  invoice.setBusiness(completeOrder.getShopclient().getBusiness());
+//                  invoice.setBusiness(completeOrder.getShopclient().getBusiness());
+                  invoice.setBusiness(Collections.singletonList(completeOrder.getShopclient().getBusiness()));
                   invoice.setCompleteOrder(completeOrder);
                   invoiceRepo.save(invoice);
 

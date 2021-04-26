@@ -1,4 +1,5 @@
 package ShopAppBackend.CompleteOrder;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import ShopAppBackend.Adress.Address;
 import ShopAppBackend.ServiceClient.ShopClient.ShopClient;
@@ -24,10 +25,10 @@ public class CompleteOrder implements Comparable<CompleteOrder> {
     private String state;
     private String date;
 
-
     @ManyToOne
     @JoinColumn(name = "client_id")
     private ShopClient shopclient;
+
 
     @OneToOne
     @JoinColumn(name = "invoice_id")

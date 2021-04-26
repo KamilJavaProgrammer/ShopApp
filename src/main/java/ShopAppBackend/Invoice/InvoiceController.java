@@ -23,4 +23,9 @@ public class InvoiceController {
         return invoiceService.GetInvoiceById(id);
     }
 
+    @GetMapping("invoice/all")
+    public ResponseEntity GetAllInvoices(){
+        return invoiceService.GetAllInvoices();
+    }
+
 }

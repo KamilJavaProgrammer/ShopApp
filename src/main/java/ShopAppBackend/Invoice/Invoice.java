@@ -6,7 +6,10 @@ import ShopAppBackend.Business.Business;
 import ShopAppBackend.ServiceClient.ServiceClient.ServiceClient;
 import ShopAppBackend.ServiceClient.ShopClient.ShopClient;
 import ShopAppBackend.CompleteOrder.CompleteOrder;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -21,17 +24,23 @@ public class Invoice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  Long id;
 
-    @JsonIgnore
-    @ManyToOne
+    @JsonBackReference
+    @ManyToMany
     @JoinColumn(name = "business_id")
-    private Business business;
+    private List<Business> business;
 
-    @JsonIgnore
+
+//    @JsonIgnore
+//    @ManyToOne
+//    @JoinColumn(name = "business_id")
+//    private Business business;
+   @JsonIgnore
+
     @ManyToOne
     @JoinColumn(name = "shop_client")
     private ShopClient shopClient;
-
     @JsonIgnore
+
     @ManyToOne
     @JoinColumn(name = "service_client")
     private ServiceClient serviceClient;
