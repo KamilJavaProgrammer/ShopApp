@@ -26,6 +26,10 @@ public class ShopClient extends Client implements Comparable<ShopClient>{
 
     @Override
     public int compareTo(ShopClient o) {
+        if(getName() == null)
+        {
+            return 0;
+        }
         return  getName().compareTo(o.getName());
     }
 

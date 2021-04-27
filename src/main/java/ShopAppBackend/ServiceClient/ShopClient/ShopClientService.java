@@ -60,12 +60,10 @@ public class ShopClientService {
 //        return ResponseEntity.status(HttpStatus.OK).body(clients);
 //    }
 
-    public List<ShopClient> GetAllClient(){
+    public ResponseEntity<List<ShopClient>> GetAllClient(){
         List<ShopClient> clients = shopClientRepository.findAll();
-        System.out.println(clients);
         clients.sort(ShopClient::compareTo);
-        System.out.println(clients);
-        return clients;
+        return ResponseEntity.status(HttpStatus.OK).body(clients);
     }
 
 

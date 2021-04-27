@@ -3,7 +3,11 @@ package ShopAppBackend.Business;
 
 import ShopAppBackend.Adress.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class BusinessService {
@@ -15,6 +19,13 @@ public class BusinessService {
     public BusinessService(BusinessRepo businessRepo, AddressService addressService) {
         this.businessRepo = businessRepo;
         this.addressService = addressService;
+    }
+
+
+    public ResponseEntity<List<Business>> GetAllBusinessFromDatabase(){
+
+        List<Business> businesses = businessRepo.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(businesses);
     }
 
 

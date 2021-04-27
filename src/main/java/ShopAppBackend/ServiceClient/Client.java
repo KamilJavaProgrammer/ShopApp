@@ -21,6 +21,7 @@ public abstract class Client {
     private String surname;
     private String phoneNumber;
 
+
     @OneToOne
     @JoinColumn(name = "business_id")
     private Business business;
