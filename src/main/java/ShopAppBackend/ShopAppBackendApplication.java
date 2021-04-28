@@ -1,7 +1,6 @@
 package ShopAppBackend;
 
 import ShopAppBackend.CompleteOrder.CompleteOrder;
-import ShopAppBackend.ServiceClient.ShopClient.ShopClient;
 import ShopAppBackend.User.User;
 import ShopAppBackend.User.UserDto;
 import org.modelmapper.ModelMapper;
@@ -14,7 +13,6 @@ import org.springframework.web.client.RestTemplate;
 import ShopAppBackend.CompleteOrder.CompleteOrderDTO;
 import ShopAppBackend.Invoice.Invoice;
 import ShopAppBackend.Invoice.InvoiceDTO;
-
 
 @SpringBootApplication
 @EnableAsync
@@ -61,12 +59,18 @@ public class ShopAppBackendApplication {
 
 		});
 
+
+
+
 		modelMapper.addMappings(new PropertyMap<Invoice, InvoiceDTO>() {
 
 			@Override
 			protected void configure() {
 				map().setId(source.getId());
 				map().setDate(source.getDate());
+				map().setInvoicePath(source.getInvoicePath());
+				map().setProductBaskets(source.getProductBaskets());
+				map().setBusiness(source.getBusiness());
 				map().setRecipient(source.getRecipient());
 				map().setPayForm(source.getPayForm());
 				map().setPaid(source.getPaid());

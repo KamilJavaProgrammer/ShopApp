@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.xhtmlrenderer.pdf.ITextRenderer;
-import ShopAppBackend.ArtcilesOnInvoice.ArticlesOnInvoiceRepo;
 import ShopAppBackend.Business.BusinessRepo;
 import ShopAppBackend.Company.Company;
 import ShopAppBackend.CompleteOrder.CompleteOrder;
@@ -33,7 +32,6 @@ public class InvoiceService {
 
     private InvoiceRepo invoiceRepo;
     private BusinessRepo businessRepo;
-    private ArticlesOnInvoiceRepo articlesOnInvoiceRepo;
     private JavaMailSender javaMailSender;
     private ProductRepo productRepo;
     private ModelMapper modelMapper;
@@ -41,10 +39,9 @@ public class InvoiceService {
 
 
     @Autowired
-    public InvoiceService(InvoiceRepo invoiceRepo, BusinessRepo businessRepo, ArticlesOnInvoiceRepo articlesOnInvoiceRepo, JavaMailSender javaMailSender, ProductRepo productRepo, ModelMapper modelMapper, CompleteOrderRepository completeOrderRepository) {
+    public InvoiceService(InvoiceRepo invoiceRepo, BusinessRepo businessRepo, JavaMailSender javaMailSender, ProductRepo productRepo, ModelMapper modelMapper, CompleteOrderRepository completeOrderRepository) {
         this.invoiceRepo = invoiceRepo;
         this.businessRepo = businessRepo;
-        this.articlesOnInvoiceRepo = articlesOnInvoiceRepo;
         this.javaMailSender = javaMailSender;
         this.productRepo = productRepo;
         this.modelMapper = modelMapper;

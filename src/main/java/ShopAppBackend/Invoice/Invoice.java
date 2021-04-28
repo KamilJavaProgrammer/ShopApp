@@ -1,8 +1,8 @@
 package ShopAppBackend.Invoice;
 
 
-import ShopAppBackend.ArtcilesOnInvoice.ArticlesOnInvoice;
 import ShopAppBackend.Business.Business;
+import ShopAppBackend.ProductBasket.ProductBasket;
 import ShopAppBackend.ServiceClient.ServiceClient.ServiceClient;
 import ShopAppBackend.ServiceClient.ShopClient.ShopClient;
 import ShopAppBackend.CompleteOrder.CompleteOrder;
@@ -24,19 +24,18 @@ public class Invoice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  Long id;
 
-    @JsonBackReference
-    @ManyToMany
-    @JoinColumn(name = "business_id")
-    private List<Business> business;
-
-
-//    @JsonIgnore
-//    @ManyToOne
+//    @JsonBackReference
+//    @ManyToMany
 //    @JoinColumn(name = "business_id")
-//    private Business business;
-   @JsonIgnore
+//    private List<Business> business;
+
 
     @ManyToOne
+    @JoinColumn(name = "business_id")
+    private Business business;
+
+   @JsonIgnore
+   @ManyToOne
     @JoinColumn(name = "shop_client")
     private ShopClient shopClient;
     @JsonIgnore
@@ -58,7 +57,7 @@ public class Invoice {
     private String invoicePath;
 
     @OneToMany
-    private List<ArticlesOnInvoice> articles;
+    private List<ProductBasket> productBaskets;
 
 
     @JsonIgnore

@@ -21,5 +21,4 @@ public class ProductBasket {
     private String vatRate;
     private String unit;
 
-
 }

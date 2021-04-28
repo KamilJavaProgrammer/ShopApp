@@ -159,8 +159,8 @@ public class CompleteOrderService {
 
 
                   invoice.setShopClient(completeOrder.getShopclient());
-//                  invoice.setBusiness(completeOrder.getShopclient().getBusiness());
-                  invoice.setBusiness(Collections.singletonList(completeOrder.getShopclient().getBusiness()));
+                  invoice.setBusiness(completeOrder.getShopclient().getBusiness());
+//                  invoice.setBusiness(Collections.singletonList(completeOrder.getShopclient().getBusiness()));
                   invoice.setCompleteOrder(completeOrder);
                   invoiceRepo.save(invoice);
 
