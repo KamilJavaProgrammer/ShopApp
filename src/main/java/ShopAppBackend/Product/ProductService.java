@@ -15,8 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ShopAppBackend.MongoDB.ItemsCount;
-import ShopAppBackend.MongoDB.MongoDbRepo;
 import ShopAppBackend.Product.Category.Category;
 import ShopAppBackend.Product.Category.CategoryRepository;
 import ShopAppBackend.Product.SubCategory.SubCategory;
@@ -46,17 +44,15 @@ public class ProductService extends Thread {
     private List<ProductDTO> productDTOs;
     public ModelMapper modelMapper;
     private SubCategoryRepository subCategoryRepository;
-    private MongoDbRepo mongoDbRepo;
     private JavaMailSender javaMailSender;
 
 
 
     @Autowired
-    public ProductService(ProductRepo productRepo, ModelMapper modelMapper, SubCategoryRepository subCategoryRepository, MongoDbRepo mongoDbRepo, JavaMailSender javaMailSender, CategoryRepository categoryRepository) {
+    public ProductService(ProductRepo productRepo, ModelMapper modelMapper, SubCategoryRepository subCategoryRepository,  JavaMailSender javaMailSender, CategoryRepository categoryRepository) {
        this.productRepo = productRepo;
        this.modelMapper = modelMapper;
        this.subCategoryRepository = subCategoryRepository;
-       this.mongoDbRepo = mongoDbRepo;
        this.javaMailSender = javaMailSender;
        this.categoryRepository = categoryRepository;
    }
@@ -214,97 +210,25 @@ public class ProductService extends Thread {
         }
     }
 
-
-    @Transactional
-    public List<List<Product>> GetAllProductFromDatabase(String response, String idOne, String idTwo ) throws ExecutionException, InterruptedException {
-
-
-        List<List<Product>> toReturn = new ArrayList();
-
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
-        Future<List<Product>> productEntity = executorService.submit(() -> GetFirstList(idOne));
-        Future<List<Product>> productEntity1 = executorService.submit(() -> GetSecondList(response,idTwo));
-
-        executorService.shutdown();
-
-        toReturn.add(productEntity.get());
-        toReturn.add(productEntity1.get());
-
-        return toReturn;
-
-    }
-
-
-    public List<Product> GetFirstList(String idOne){
-
-        List<Product> productEntities = new ArrayList<>();
-        Optional<ItemsCount> items =  mongoDbRepo.findById(idOne);
-
-
-        if(items.isPresent())
-           {
-               if(items.get().getNumber() < 8 )
-                   {
-                       productEntities.addAll(productRepo.GetRecentItems(16));
-                   }
-                else
-                   {
-                       productEntities.addAll(productRepo.GetRecentItems(items.get().getNumber()));
-                   }
-           }
-           else
-           {
-
-               productEntities.addAll(productRepo.GetRecentItems(16));
-           }
-
-
-           return productEntities;
-
-   }
-
-
-    public List<Product> GetSecondList(String response, String idTwo){
-
-
-       List<Product> productEntities1 = new ArrayList<>();
-
-        if(response.equals("Domyślny"))
-       {
-           productEntities1.addAll(productRepo.GetFirstItems(12));
-       }
-
-        else if(response.equals("Indywidualny"))
-        {
-            Optional<ItemsCount> item =  mongoDbRepo.findById(idTwo);
-
-            if(item.isPresent())
-            {
-                List<Integer> integers = item.get().getAmountOfElements();
-
-                integers.forEach(integer -> {
-                    if(productRepo.existsById(integer.longValue()))
-                    {
-                        productEntities1.add(productRepo.getOne(integer.longValue()));
-                    }
-
-                    else
-                    {
-                        logger.warn("Unable find this id");
-                    }
-                });
-
-            }
-            else
-            {
-                productEntities1.addAll(productRepo.GetFirstItems(12));
-            }
-        }
-        return productEntities1;
-
-    }
-
-
+//
+//    @Transactional
+//    public List<List<Product>> GetAllProductFromDatabase(String response, String idOne, String idTwo ) throws ExecutionException, InterruptedException {
+//
+//
+//        List<List<Product>> toReturn = new ArrayList();
+//
+//        ExecutorService executorService = Executors.newFixedThreadPool(2);
+//        Future<List<Product>> productEntity = executorService.submit(() -> GetFirstList(idOne));
+//        Future<List<Product>> productEntity1 = executorService.submit(() -> GetSecondList(response,idTwo));
+//
+//        executorService.shutdown();
+//
+//        toReturn.add(productEntity.get());
+//        toReturn.add(productEntity1.get());
+//
+//        return toReturn;
+//
+//    }
 
 
 

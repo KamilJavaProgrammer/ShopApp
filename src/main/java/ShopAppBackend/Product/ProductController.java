@@ -84,10 +84,7 @@ public class ProductController {
     public ResponseEntity<Optional<Product>> GetOneProduct(@PathVariable Long id) throws ProductNotFound {
         return ResponseEntity.ok(this.productService.GetOneProductFromDatabase(id));
     }
-    @GetMapping("/list")
-    public ResponseEntity<List<List<Product>>> GetListProduct() throws ExecutionException, InterruptedException {
-        return ResponseEntity.ok(this.productService.GetAllProductFromDatabase("Indywidualny","numberRecentlyAddedPhoto","listnumbers")) ;
-    }
+
 
 
 
