@@ -18,14 +18,20 @@ public class InvoiceController {
         this.invoiceService = invoiceService;
     }
 
-    @GetMapping("invoice/{id}")
-    public ResponseEntity GetInvoiceById(@PathVariable Long id) throws FileNotFoundException {
+    @GetMapping("/invoice/{id}")
+    public ResponseEntity<?> GetInvoiceById(@PathVariable Long id) throws FileNotFoundException {
         return invoiceService.GetInvoiceById(id);
     }
 
-    @GetMapping("invoice/all")
-    public ResponseEntity GetAllInvoices(){
+    @GetMapping("/invoice/all")
+    public ResponseEntity<?> GetAllInvoices(){
         return invoiceService.GetAllInvoices();
+    }
+
+
+    @PostMapping("/invoice")
+    public ResponseEntity<?> AddOneInvoice(@RequestBody Invoice invoice){
+        return null;
     }
 
 }
