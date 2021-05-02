@@ -17,6 +17,6 @@ public class UserDto {
     private String role;
     private boolean authorization;
     private String codeVerification;
-    public String password1;
+    public String changedPassword;
     private ShopClient shopClient;
 }

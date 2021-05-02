@@ -1,11 +1,16 @@
 package ShopAppBackend.User;
 
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ShopAppBackend.ServiceClient.ShopClient.ShopClient;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -17,10 +22,19 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
+    @NotNull(message = "Username can not be null !")
+    @NotEmpty(message = "Username can not be Empty !")
+    @Pattern(regexp = "[a-zA-Z0-9]*")
     private String username;
 
+    @NotNull(message = "Password can not be null !")
+    @NotEmpty(message = "Password can not be Empty !")
+    @Pattern(regexp = "[a-zA-Z0-9.]*" )
     private String password;
 
+    @NotNull
+    @NotEmpty
+    @Email
     private String email;
 
     private String role;
@@ -30,9 +44,10 @@ public class User implements UserDetails {
     private String codeVerification;
 
     @Transient
-    public String password1;
+    public String changedPassword;
 
-    @OneToOne
+
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "shopClient_id")
     private ShopClient shopClient;
 

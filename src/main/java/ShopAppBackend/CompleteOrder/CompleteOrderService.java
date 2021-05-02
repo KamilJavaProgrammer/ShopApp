@@ -25,10 +25,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -175,7 +173,7 @@ public class CompleteOrderService {
             company.setNip("123456789");
             company.setAccount("02103232323232329");
 
-           invoiceService.generatePDF(completeOrder,company);
+//           invoiceService.generatePDF(completeOrder,company);
 
             }
 

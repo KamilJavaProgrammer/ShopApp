@@ -1,15 +1,17 @@
 package ShopAppBackend.Invoice;
-
 import ShopAppBackend.Product.Product;
 import ShopAppBackend.Product.ProductRepo;
+import ShopAppBackend.User.UserService;
 import com.lowagie.text.DocumentException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import ShopAppBackend.Business.BusinessRepo;
@@ -17,7 +19,8 @@ import ShopAppBackend.Company.Company;
 import ShopAppBackend.CompleteOrder.CompleteOrder;
 import ShopAppBackend.CompleteOrder.CompleteOrderRepository;
 import ShopAppBackend.ProductBasket.ProductBasket;
-
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,22 +33,24 @@ import java.util.List;
 @Service
 public class InvoiceService {
 
-    private InvoiceRepo invoiceRepo;
+    private final InvoiceRepo invoiceRepo;
     private BusinessRepo businessRepo;
     private JavaMailSender javaMailSender;
-    private ProductRepo productRepo;
+    private final ProductRepo productRepo;
     private ModelMapper modelMapper;
-    private CompleteOrderRepository completeOrderRepository;
+    private final CompleteOrderRepository completeOrderRepository;
+    private final UserService userService;
 
 
     @Autowired
-    public InvoiceService(InvoiceRepo invoiceRepo, BusinessRepo businessRepo, JavaMailSender javaMailSender, ProductRepo productRepo, ModelMapper modelMapper, CompleteOrderRepository completeOrderRepository) {
+    public InvoiceService(InvoiceRepo invoiceRepo, BusinessRepo businessRepo, JavaMailSender javaMailSender, ProductRepo productRepo, ModelMapper modelMapper, CompleteOrderRepository completeOrderRepository,UserService userService) {
         this.invoiceRepo = invoiceRepo;
         this.businessRepo = businessRepo;
         this.javaMailSender = javaMailSender;
         this.productRepo = productRepo;
         this.modelMapper = modelMapper;
         this.completeOrderRepository = completeOrderRepository;
+        this.userService = userService;
     }
 
 
@@ -70,20 +75,16 @@ public class InvoiceService {
     double brutto;
 
 
-    public  void generatePDF(CompleteOrder completeOrder, Company company) throws IOException, SQLException {
-
-        List<ProductBasket> productBaskets = completeOrder.getProductsBasket();
+    public  void generatePDF(Invoice invoice, Company company) throws IOException, SQLException {
 
 
         String date = LocalDate.now().toString();
         String[] helpTable = date.split("-");
 
         String invoiceNumber = helpTable[2] + "/" + helpTable[1] + "/" + helpTable[0];
-        String email = completeOrder.getShopclient().getEmail();
-
-        String nip = completeOrder.getShopclient().getBusiness().getNip();
-        String address = completeOrder.getShopclient().getBusiness().getAddress().getPlaceOfresident();
-        String nameBusinnes = completeOrder.getShopclient().getBusiness().getName();
+        String nip = invoice.getBusiness().getNip();
+        String address = invoice.getBusiness().getAddress().getPlaceOfresident();
+        String nameBusinnes = invoice.getBusiness().getName();
 
         html1 = "";
         html2 = "";
@@ -92,8 +93,9 @@ public class InvoiceService {
         this.vat = 0;
         this.netto = 0;
 
-        for(ProductBasket productBasket :productBaskets)
+        for(ProductBasket productBasket :invoice.getProductBaskets())
         {
+            System.out.println(productBasket);
 
             this.lp = lp+1;
             this.nameOfProduct = productBasket.getNameOfProduct();
@@ -142,17 +144,18 @@ public class InvoiceService {
                 " Nabywca </div>" +
 
                " <div style= 'text-align:left; width:33.3%; float:left; font-size:20px; font-weight:400 clear:both;'> " +
-                " <br> </br>" + nameBusinnes +
-                "     <br>  </br>" + address +
-                "     <br></br>" + nip +
+                " <br></br>" + company.getName() +
+                "     <br></br>" + company.getHeadquarters() +
+                "     <br></br>" + company.getNip() +
                 "    </div>  " +
 
                 "<div style='width:33.3%;  visibility:hidden; float:left; '>xyzabcde</div>"+
 
                 " <div style= 'text-align:left; float:left; width:33.3%; font-size:20px; font-weight:400; '> " +
-                " <br></br>" + company.getName() +
-                "     <br></br>" + company.getHeadquarters() +
-                "     <br></br>" + company.getNip() +
+
+                                " <br> </br>" + nameBusinnes +
+                "     <br>  </br>" + address +
+                "     <br></br>" + nip +
                 "    </div>  " ;
 
 
@@ -186,12 +189,15 @@ public class InvoiceService {
 
 
 
-
             try {
 
-               Path path = Files.createFile(Paths.get("C:/Rozliczenia/" + completeOrder.getShopclient().getSurname() + ".pdf"));
+                String key = this.userService.GenerateRandomKey();
 
-               completeOrder.getInvoiceVat().setInvoicePath(path.toString());
+               Path path = Files.createFile(Paths.get("C:/Rozliczenia/" + invoice.getBusiness().getName() + key+ ".pdf"));
+
+
+//               completeOrder.getInvoiceVat().setInvoicePath(path.toString());
+//               completeOrder.getInvoiceVat().setInvoicePath(path.toString());
 
                OutputStream out = new FileOutputStream(path.toString());
                 ITextRenderer renderer = new ITextRenderer();
@@ -252,24 +258,28 @@ public class InvoiceService {
                 out.close();
 
 
-//                MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-//                MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-//                mimeMessageHelper.setTo(email);
-//                mimeMessageHelper.setSubject("PDF");
-//                FileSystemResource file = new FileSystemResource(
-//                        new File("C:/Rozliczenia/"+completeOrder.getClient().getSurname()+ ".pdf"));
-//                mimeMessageHelper.addAttachment("Faktura Vat",file,"application/pdf");
-//                mimeMessageHelper.setText("Dziękujemy za zakupy w firmie CafeKam.W załączniku przesyłamy fakturę Vat", false);
-//                javaMailSender.send(mimeMessage);
-
-
             } catch (IOException | DocumentException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
 
-        public ResponseEntity GetInvoiceById(Long id) throws FileNotFoundException {
+
+    public void SendInvoiceToClientEmail(String email,String fileName) throws MessagingException {
+                        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+                MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+                mimeMessageHelper.setTo(email);
+                mimeMessageHelper.setSubject("PDF");
+                FileSystemResource file = new FileSystemResource(
+                        new File("C:/Rozliczenia/" + fileName + ".pdf"));
+                mimeMessageHelper.addAttachment("Faktura Vat",file,"application/pdf");
+                mimeMessageHelper.setText("Dziękujemy za zakupy w firmie CafeKam.W załączniku przesyłamy fakturę Vat", false);
+                javaMailSender.send(mimeMessage);
+    }
+
+
+
+        public ResponseEntity<InputStreamResource> GetInvoiceById(Long id) throws FileNotFoundException {
 
            CompleteOrder completeOrder = completeOrderRepository.getOne(id);
             String path = completeOrder.getInvoiceVat().getInvoicePath();

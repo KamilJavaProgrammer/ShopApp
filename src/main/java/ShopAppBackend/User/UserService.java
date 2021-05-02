@@ -11,6 +11,8 @@ import ShopAppBackend.ServiceClient.ShopClient.ShopClientService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.mail.iap.Response;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.slf4j.Logger;
@@ -37,18 +39,16 @@ public class UserService  {
 
     public final long expirationTime;
     public final  String secret;
-    private UserRepo userRepo;
+    private final UserRepo userRepo;
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
-    private JavaMailSender javaMailSender;
-    private PasswordEncoder passwordEncoder;
+    private final JavaMailSender javaMailSender;
+    private final PasswordEncoder passwordEncoder;
     public static String name = "";
-   public  String codeVerification;
-   public ShopClientRepository shopClientRepository;
-   public ShopClientService shopClientService;
-
-   public ModelMapper modelMapper;
-   private ObjectMapper objectMapper;
-   private AddressRepo addressRepo;
+    public  String codeVerification;
+    public ShopClientRepository shopClientRepository;
+    public ShopClientService shopClientService;
+    public ModelMapper modelMapper;
+    private ObjectMapper objectMapper;
 
 
 
@@ -56,7 +56,7 @@ public class UserService  {
     public UserService(@Value("${jwt.secret}")String secret, @Value("${jwt.token.expirationTime}") long expirationTime,
                        UserRepo userRepo, JavaMailSender javaMailSender, PasswordEncoder passwordEncoder,
                        ShopClientRepository shopClientRepository, ModelMapper modelMapper, ObjectMapper objectMapper,
-                       AddressRepo addressRepo,ShopClientService shopClientService) {
+                       ShopClientService shopClientService) {
 
         this.expirationTime = expirationTime;
         this.secret = secret;
@@ -66,10 +66,53 @@ public class UserService  {
         this.shopClientRepository = shopClientRepository;
         this.modelMapper = modelMapper;
         this.objectMapper = objectMapper;
-        this.addressRepo = addressRepo;
         this.shopClientService = shopClientService;
 
     }
+
+
+
+    public ResponseEntity<String> RegistrationUser(User user, Mailing mailing)throws MessagingException,IOException {
+
+        try {
+            if (!userRepo.existsUserByEmail(user.getEmail())) {
+
+                if (!userRepo.existsUserByUsername(user.getUsername())) {
+
+                    user.setAuthorization(false);
+                    user.setRole("USER");
+                    user.setShopClient(shopClientService.CreateNewShopClient(user));
+
+                    this.codeVerification = this.GenerateRandomKey();
+                    user.setCodeVerification(codeVerification);
+                    String encodedPassword = passwordEncoder.encode(user.getPassword());
+                    user.setPassword(encodedPassword);
+                    userRepo.save(user);
+                    FilterJwt.SaveToFile("Add User of email" + " " + user.getEmail());
+                    mailing.Mail();
+                    return ResponseEntity.status(HttpStatus.OK).body("OK");
+
+                }
+                else {
+                    logger.warn("Login exists");
+                    FilterJwt.SaveToFile("LoginExists");
+                    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("LoginExists");
+
+                }
+            }
+            else {
+                logger.info("Email exists");
+                FilterJwt.SaveToFile("Email exists");
+                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("LoginExists");
+            }
+        }
+        catch (NullPointerException | InterruptedException e)
+        {
+            logger.warn("User is null");
+        }
+        return null;
+    }
+
 
     public ResponseEntity<String>GenJsonWebToken(User user,User user1) throws IOException {
         if (passwordEncoder.matches(user.getPassword(), user1.getPassword())) {
@@ -114,7 +157,6 @@ public class UserService  {
         {
             logger.warn("User dont exists");
             FilterJwt.SaveToFile("Failed Attempt Login User" + user.getUsername() + "." + "User dont exists");
-//            return HttpStatus.valueOf("UserDontExists");
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("UserDontExists");
 
         }
@@ -126,14 +168,13 @@ public class UserService  {
     public ResponseEntity<String> LoginAndGenJsonWebToken(User user) throws IOException{
         if (userRepo.existsUserByUsername(user.getUsername())) {
 
-            User user1 = userRepo.findByUsername(user.getUsername());
-            return GenJsonWebToken(user,user1);
+            User userInstant = userRepo.findByUsername(user.getUsername());
+            return GenJsonWebToken(user,userInstant);
         }
         else
         {
             logger.warn("User dont exists");
             FilterJwt.SaveToFile("Failed Attempt Login User" + user.getUsername() + "." + "User dont exists");
-//            return HttpStatus.valueOf("UserDontExists");
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("UserDontExists");
 
         }
@@ -145,43 +186,14 @@ public class UserService  {
 
 
 
-    public String RegistrationUser(User user,Mailing mailing)throws MessagingException,IOException {
-
-        try {
-            if (!userRepo.existsUserByEmail(user.getEmail())) {
-
-                if (!userRepo.existsUserByUsername(user.getUsername())) {
-
-                    user.setAuthorization(false);
-                    user.setRole("USER");
-                    user.setShopClient(shopClientService.CreateNewShopClient(user));
-
-                    this.codeVerification = this.GenerateRandomKey();
-                    user.setCodeVerification(codeVerification);
-                    String encodedPassword = passwordEncoder.encode(user.getPassword());
-                    user.setPassword(encodedPassword);
-                    userRepo.save(user);
-                    FilterJwt.SaveToFile("Add User of email" + " " + user.getEmail());
-                    mailing.Mail();
-                    return "OK";
 
 
-                } else {
-                    logger.warn("Login exists");
-                    FilterJwt.SaveToFile("LoginExists");
-                    return "LoginExists";
-                }
-            } else {
-                logger.info("Email exists");
-                FilterJwt.SaveToFile("Email exists");
-                return "EmailExists";
-            }
-        }catch (NullPointerException | InterruptedException e)
-        {
-            logger.warn("User is null");
-        }
-        return null;
-    }
+
+
+
+
+
+
 
    @Async
     public void SendEmail(String to, String subject, String text, boolean isHtmlContent) throws MessagingException, InterruptedException {

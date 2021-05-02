@@ -7,6 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
+import javax.validation.Valid;
 import java.io.IOException;
 
 @RestController
@@ -14,8 +15,8 @@ import java.io.IOException;
 
 public class UserController  {
 
-    private UserService userService;
-    private UserRepo userRepo;
+    private final UserService userService;
+    private final UserRepo userRepo;
 
     @Autowired
     public UserController(UserService userService, UserRepo userRepo) {
@@ -24,23 +25,23 @@ public class UserController  {
     }
 
 
-
-
   @PostMapping("/registration")
-  public ResponseEntity<String> RegistrationUser(@RequestBody User user) throws MessagingException, IOException, InterruptedException {
+  public ResponseEntity<ResponseEntity<String>> RegistrationUser(@Valid @RequestBody User user) throws MessagingException, IOException, InterruptedException {
         return ResponseEntity.ok(userService.RegistrationUser(user, () -> userService.SendEmail(user.getEmail(),"Kod weryfikacyjny",userRepo.findByUsername(user.getUsername()).getCodeVerification(),false)));
   }
 
-  @PatchMapping("/verification")
+    @PostMapping("/login")
+    public ResponseEntity<?> Login(@Valid @RequestBody User user) throws IOException{
+        return ResponseEntity.ok(userService.LoginAndGenJsonWebToken(user));
+    }
+
+
+    @PatchMapping("/verification")
   public ResponseEntity<String> VerifyCode(@RequestBody User user ) throws IOException {
     return ResponseEntity.ok(userService.VerifyCode(user));
 
   }
 
-  @PostMapping("/login")
-    public ResponseEntity Login(@RequestBody User user) throws IOException{
-      return ResponseEntity.ok(userService.LoginAndGenJsonWebToken(user));
-  }
 
 
     @PostMapping("/login/admin")

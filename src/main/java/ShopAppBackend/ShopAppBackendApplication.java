@@ -95,7 +95,7 @@ public class ShopAppBackendApplication {
 				map().setShopClient(source.getShopClient());
 				map().setPassword(source.getPassword());
 				map().setCodeVerification(source.getCodeVerification());
-				map().setPassword1(source.getPassword1());
+				map().setPassword1(source.getChangedPassword());
 
 			}
 		});
