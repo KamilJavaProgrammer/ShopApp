@@ -1,14 +1,19 @@
 package ShopAppBackend.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -31,7 +36,7 @@ public class UserController  {
   }
 
     @PostMapping("/login")
-    public ResponseEntity<?> Login(@Valid @RequestBody User user) throws IOException{
+    public ResponseEntity<?> Login(@Valid @RequestBody User user) throws IOException, UserNotFoundException {
         return ResponseEntity.ok(userService.LoginAndGenJsonWebToken(user));
     }
 
@@ -45,7 +50,7 @@ public class UserController  {
 
 
     @PostMapping("/login/admin")
-    public ResponseEntity LoginAdmin(@RequestBody User user) throws IOException{
+    public ResponseEntity LoginAdmin(@RequestBody User user) throws IOException, UserNotFoundException {
         return ResponseEntity.ok(userService.LoginAdminAndGenJsonWebToken(user));
     }
 
@@ -66,12 +71,24 @@ public class UserController  {
   }
 
     @GetMapping("/user")
-    public ResponseEntity<?> GetUser(@AuthenticationPrincipal UsernamePasswordAuthenticationToken user) throws UserNotFoundException {
+    public ResponseEntity<?> GetUser(@AuthenticationPrincipal UsernamePasswordAuthenticationToken user) throws UserNotFoundException, IOException {
         return ResponseEntity.ok(userService.GetUserByName(user.getName()));
     }
 
 
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        System.out.println(errors);
+        return errors;
+    }
 
 
 

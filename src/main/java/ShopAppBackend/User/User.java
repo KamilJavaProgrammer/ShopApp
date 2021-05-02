@@ -32,8 +32,7 @@ public class User implements UserDetails {
     @Pattern(regexp = "[a-zA-Z0-9.]*" )
     private String password;
 
-    @NotNull
-    @NotEmpty
+
     @Email
     private String email;
 

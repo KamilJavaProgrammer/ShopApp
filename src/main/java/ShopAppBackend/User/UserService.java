@@ -1,25 +1,17 @@
 package ShopAppBackend.User;
 
-
-import ShopAppBackend.Adress.Address;
-import ShopAppBackend.Adress.AddressRepo;
-import ShopAppBackend.Business.Business;
-import ShopAppBackend.ServiceClient.ShopClient.ShopClient;
+import ShopAppBackend.Logs.LogsApplication;
 import ShopAppBackend.ServiceClient.ShopClient.ShopClientRepository;
 import ShopAppBackend.Security.FilterJwt;
 import ShopAppBackend.ServiceClient.ShopClient.ShopClientService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.mail.iap.Response;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Example;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -30,13 +22,14 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.util.*;
 
 @Service
 public class UserService  {
 
+
+    private final LogsApplication logsApplication;
     public final long expirationTime;
     public final  String secret;
     private final UserRepo userRepo;
@@ -56,7 +49,8 @@ public class UserService  {
     public UserService(@Value("${jwt.secret}")String secret, @Value("${jwt.token.expirationTime}") long expirationTime,
                        UserRepo userRepo, JavaMailSender javaMailSender, PasswordEncoder passwordEncoder,
                        ShopClientRepository shopClientRepository, ModelMapper modelMapper, ObjectMapper objectMapper,
-                       ShopClientService shopClientService) {
+                       ShopClientService shopClientService,
+                       LogsApplication logsApplication) {
 
         this.expirationTime = expirationTime;
         this.secret = secret;
@@ -67,6 +61,7 @@ public class UserService  {
         this.modelMapper = modelMapper;
         this.objectMapper = objectMapper;
         this.shopClientService = shopClientService;
+        this.logsApplication = logsApplication;
 
     }
 
@@ -114,31 +109,30 @@ public class UserService  {
     }
 
 
-    public ResponseEntity<String>GenJsonWebToken(User user,User user1) throws IOException {
-        if (passwordEncoder.matches(user.getPassword(), user1.getPassword())) {
+    public ResponseEntity<String>GenJsonWebToken(User user,User userInstant) throws IOException {
+        if (passwordEncoder.matches(user.getPassword(), userInstant.getPassword())) {
 
             String token = JWT.create()
-                    .withSubject(user1.getUsername())
-                    .withClaim("role",user1.getRole())
+                    .withSubject(userInstant.getUsername())
+                    .withClaim("role",userInstant.getRole())
                     .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))
                     .sign(Algorithm.HMAC256(secret));
 
 
             logger.info("Sucessfull Generate JWT");
-            FilterJwt.SaveToFile("Sucessfull Generate JWT from user" + user1.getUsername());
-
+            logsApplication.SaveToFile("Sucessfull Generate JWT from user" + userInstant.getUsername());
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(token);
 
         }
         else
         {
             logger.warn("Wrong login or password");
-            FilterJwt.SaveToFile("Wrong login or password");
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("WrongLoginOrPassword");
+            logsApplication.SaveToFile("Wrong login or password");
+            throw new WrongLoginData();
         }
     }
 
-    public ResponseEntity<String> LoginAdminAndGenJsonWebToken(User user) throws IOException{
+    public ResponseEntity<String> LoginAdminAndGenJsonWebToken(User user) throws IOException, UserNotFoundException {
         if (userRepo.existsUserByUsername(user.getUsername())) {
 
             User user1 = userRepo.findByUsername(user.getUsername());
@@ -157,7 +151,8 @@ public class UserService  {
         {
             logger.warn("User dont exists");
             FilterJwt.SaveToFile("Failed Attempt Login User" + user.getUsername() + "." + "User dont exists");
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("UserDontExists");
+            throw new UserNotFoundException();
+//            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("UserDontExists");
 
         }
     }
@@ -165,7 +160,9 @@ public class UserService  {
 
 
 
-    public ResponseEntity<String> LoginAndGenJsonWebToken(User user) throws IOException{
+    public ResponseEntity<String> LoginAndGenJsonWebToken(User user) throws IOException, UserNotFoundException {
+
+
         if (userRepo.existsUserByUsername(user.getUsername())) {
 
             User userInstant = userRepo.findByUsername(user.getUsername());
@@ -173,9 +170,9 @@ public class UserService  {
         }
         else
         {
-            logger.warn("User dont exists");
-            FilterJwt.SaveToFile("Failed Attempt Login User" + user.getUsername() + "." + "User dont exists");
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("UserDontExists");
+            logger.warn("User not found");
+            this.logsApplication.SaveToFile("User not found");
+            throw new UserNotFoundException();
 
         }
     }
@@ -280,7 +277,7 @@ public class UserService  {
     }
 
 
-    public ResponseEntity<UserDto> GetUserByName(String username) throws UserNotFoundException {
+    public ResponseEntity<UserDto> GetUserByName(String username) throws UserNotFoundException, IOException {
         User user = userRepo.findByUsername(username);
         if(user != null){
            UserDto userDto = modelMapper.map(user,UserDto.class);
@@ -288,7 +285,7 @@ public class UserService  {
         }
         else
         {
-            throw new UserNotFoundException("User Not found in database");
+            throw new UserNotFoundException();
         }
 
     }
