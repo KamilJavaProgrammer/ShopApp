@@ -9,12 +9,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.io.IOException;
 
 
-@ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "User Not Found")
 public class UserNotFoundException extends RuntimeException {
 
-
+    private static final String EXCEPTION_MESSAGE = "User not found";
     public UserNotFoundException(){
-        super();
+        super(EXCEPTION_MESSAGE);
     }
 
 }
