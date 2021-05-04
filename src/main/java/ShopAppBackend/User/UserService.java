@@ -259,41 +259,6 @@ public class UserService  {
 
 
 
-
-    public String SendCodeForChangePassword(User user) throws MessagingException, IOException, InterruptedException {
-
-       if(userRepo.existsUserByEmail(user.getEmail())) {
-
-           String codeVerification = this.GenerateRandomKey();
-           SendEmail(user.getEmail(), "Kod do zmiany hasła", codeVerification, false);
-
-           logger.info("SendCodeToEmail");
-           FilterJwt.SaveToFile("SendCodeToEmail");
-           return "OK";
-       }
-       else
-       {
-           logger.error("Email Dont Exists");
-           FilterJwt.SaveToFile("Email dont exists");
-           return "EmailDontExists";
-
-       }
-    }
-
-    public String ChangePassword(User user){
-
-        if(userRepo.existsUserByEmail(user.getEmail())){
-            User user1 = userRepo.findByEmail(user.getEmail());
-            user1.setPassword(passwordEncoder.encode(user.getPassword()));
-            userRepo.save(user1);
-            return "OK";
-        }
-        else
-        {
-            return "Dont exists User";
-        }
-    }
-
     public String GenerateRandomKey(){
         Random random = new Random();
         String codeVerif = "";
@@ -317,6 +282,42 @@ public class UserService  {
             throw new UserNotFoundException();
         }
 
+    }
+
+
+
+    public String SendCodeForChangePassword(User user) throws MessagingException, IOException, InterruptedException {
+
+        if(userRepo.existsUserByEmail(user.getEmail())) {
+
+            String codeVerification = this.GenerateRandomKey();
+            SendEmail(user.getEmail(), "Kod do zmiany hasła", codeVerification, false);
+
+            logger.info("SendCodeToEmail");
+            FilterJwt.SaveToFile("SendCodeToEmail");
+            return "OK";
+        }
+        else
+        {
+            logger.error("Email Dont Exists");
+            FilterJwt.SaveToFile("Email dont exists");
+            return "EmailDontExists";
+
+        }
+    }
+
+    public String ChangePassword(User user){
+
+        if(userRepo.existsUserByEmail(user.getEmail())){
+            User user1 = userRepo.findByEmail(user.getEmail());
+            user1.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepo.save(user1);
+            return "OK";
+        }
+        else
+        {
+            return "Dont exists User";
+        }
     }
 
 }

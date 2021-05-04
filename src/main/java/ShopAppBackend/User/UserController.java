@@ -47,26 +47,14 @@ public class UserController  {
         return ResponseEntity.ok(userService.LoginAdminAndGenJsonWebToken(user));
     }
 
-
-
-
-  @PatchMapping("/changePassword")
-  public ResponseEntity<String> SendCodeForChangePassword(@RequestBody User user ) throws MessagingException, IOException, InterruptedException {
+    @PatchMapping("/changePassword")
+    public ResponseEntity<String> SendCodeForChangePassword(@RequestBody User user ) throws MessagingException, IOException, InterruptedException {
      userService.SendCodeForChangePassword(user);
      return ResponseEntity.ok(" ");
   }
 
-//  @PostMapping("/user")
-//  public ResponseEntity<User> GetUserFromDataBase(){
-//     return ResponseEntity.ok(userService.GetUserByName());
-//  }
 
-  @GetMapping("/name12")
-    public ResponseEntity<String> GetNameOfUser(@AuthenticationPrincipal UsernamePasswordAuthenticationToken user){
-        return ResponseEntity.ok(user.getName());
-  }
-
-    @GetMapping("/user")
+  @GetMapping("/user")
     public ResponseEntity<?> GetUser(@AuthenticationPrincipal UsernamePasswordAuthenticationToken user) throws UserNotFoundException, IOException {
         return ResponseEntity.ok(userService.GetUserByName(user.getName()));
     }
