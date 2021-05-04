@@ -31,10 +31,16 @@ public class UserController  {
     }
 
 
-  @PostMapping("/registration")
-  public ResponseEntity<Response> RegistrationUser(@Valid @RequestBody User user) throws MessagingException, IOException, InterruptedException {
-        return ResponseEntity.ok(userService.RegistrationUser(user, () -> userService.SendEmail(user.getEmail(),"Kod weryfikacyjny",userRepo.findByUsername(user.getUsername()).getCodeVerification(),false)));
-  }
+   @PostMapping("/registration")
+   public ResponseEntity<Response> RegistrationUser(@Valid @RequestBody UserDto userDto) throws MessagingException, IOException, InterruptedException {
+         return ResponseEntity.ok(userService.RegistrationUser(userDto, () -> userService.SendEmail(userDto.getEmail(),"Kod weryfikacyjny",userRepo.findByUsername(userDto.getUsername()).getCodeVerification(),false)));
+   }
+
+    @PatchMapping("/verification")
+    public ResponseEntity<Response> VerifyCode(@RequestBody UserDto userDto ) throws IOException {
+        return ResponseEntity.ok(userService.VerifyCode(userDto));
+
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> Login(@Valid @RequestBody User user) throws IOException, UserNotFoundException {
@@ -42,11 +48,7 @@ public class UserController  {
     }
 
 
-    @PatchMapping("/verification")
-  public ResponseEntity<String> VerifyCode(@RequestBody User user ) throws IOException {
-    return ResponseEntity.ok(userService.VerifyCode(user));
 
-  }
 
 
 

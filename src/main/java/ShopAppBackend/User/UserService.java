@@ -69,7 +69,9 @@ public class UserService  {
 
 
 
-    public Response RegistrationUser(User user, Mailing mailing)throws MessagingException,IOException {
+    public Response RegistrationUser(UserDto userDto, Mailing mailing)throws MessagingException,IOException {
+
+                 User user = objectMapper.convertValue(userDto,User.class);
 
         try {
             Response response = new Response();
@@ -115,6 +117,40 @@ public class UserService  {
         }
         return null;
     }
+
+
+
+    public Response VerifyCode(UserDto userDto) throws IOException{
+
+        User user = objectMapper.convertValue(userDto,User.class);
+
+        User userInstant =  userRepo.findByUsername(user.getUsername());
+
+        String codeFromUser = user.getCodeVerification();
+        String codeVerification = userInstant.getCodeVerification();
+        Response response = new Response();
+
+        if(codeFromUser.equals(codeVerification))
+        {
+            userInstant.setAuthorization(true);
+            userRepo.save(userInstant);
+
+            logger.info("Successful verification");
+            FilterJwt.SaveToFile("Successful verification by user" + userInstant.getUsername());
+            response.setMessage("OK");
+            response.setStatus(201);
+
+        }
+        else
+        {
+            logger.warn("Inauspicious verification");
+            FilterJwt.SaveToFile("No Successful verification by user" + userInstant.getUsername());
+            response.setMessage("Inauspicious verification");
+            response.setStatus(401);
+        }
+        return response;
+    }
+
 
 
 
@@ -213,30 +249,6 @@ public class UserService  {
 
     }
 
-    public String VerifyCode(User user) throws IOException{
-
-      User user1 =  userRepo.findByUsername(user.getUsername());
-
-      String codeFromUser = user.getCodeVerification();
-      String codeVerification = user1.getCodeVerification();
-
-      if(codeFromUser.equals(codeVerification))
-      {
-          user1.setAuthorization(true);
-          userRepo.save(user1);
-
-          logger.info("Successful verification");
-          FilterJwt.SaveToFile("Successful verification by user" + user1.getUsername());
-          return "OK";
-      }
-      else
-      {
-          logger.warn("Inauspicious verification");
-          FilterJwt.SaveToFile("No Successful verification by user" + user1.getUsername());
-
-          return "ERROR";
-      }
-    }
 
 
 
