@@ -1,5 +1,6 @@
 package ShopAppBackend.User;
 
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class UserController  {
 
 
   @PostMapping("/registration")
-  public ResponseEntity<ResponseEntity<String>> RegistrationUser(@Valid @RequestBody User user) throws MessagingException, IOException, InterruptedException {
+  public ResponseEntity<Response> RegistrationUser(@Valid @RequestBody User user) throws MessagingException, IOException, InterruptedException {
         return ResponseEntity.ok(userService.RegistrationUser(user, () -> userService.SendEmail(user.getEmail(),"Kod weryfikacyjny",userRepo.findByUsername(user.getUsername()).getCodeVerification(),false)));
   }
 

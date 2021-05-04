@@ -7,6 +7,7 @@ import ShopAppBackend.ServiceClient.ShopClient.ShopClientService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.util.*;
 
 @Service
@@ -67,9 +69,11 @@ public class UserService  {
 
 
 
-    public ResponseEntity<String> RegistrationUser(User user, Mailing mailing)throws MessagingException,IOException {
+    public Response RegistrationUser(User user, Mailing mailing)throws MessagingException,IOException {
 
         try {
+            Response response = new Response();
+
             if (!userRepo.existsUserByEmail(user.getEmail())) {
 
                 if (!userRepo.existsUserByUsername(user.getUsername())) {
@@ -85,20 +89,24 @@ public class UserService  {
                     userRepo.save(user);
                     FilterJwt.SaveToFile("Add User of email" + " " + user.getEmail());
                     mailing.Mail();
-                    return ResponseEntity.status(HttpStatus.OK).body("OK");
-
+                         response.setMessage("OK");
+                         response.setStatus(201);
+                         return response;
                 }
                 else {
                     logger.warn("Login exists");
-                    FilterJwt.SaveToFile("LoginExists");
-                    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("LoginExists");
-
+                    FilterJwt.SaveToFile("Login Exists");
+                    response.setMessage("Login Exists");
+                    response.setStatus(200);
+                    return response;
                 }
             }
             else {
-                logger.info("Email exists");
+                logger.info("Email exists.");
                 FilterJwt.SaveToFile("Email exists");
-                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("LoginExists");
+                response.setMessage("Email exists");
+                response.setStatus(200);
+                return response;
             }
         }
         catch (NullPointerException | InterruptedException e)
@@ -107,6 +115,7 @@ public class UserService  {
         }
         return null;
     }
+
 
 
     public ResponseEntity<String>GenJsonWebToken(User user,User userInstant) throws IOException {
