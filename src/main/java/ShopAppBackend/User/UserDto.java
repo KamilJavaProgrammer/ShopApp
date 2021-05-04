@@ -22,7 +22,7 @@ public class UserDto {
     private String email;
     public String changedPassword;
     private ShopClient shopClient;
-
+    private boolean authorization;
     private String codeVerification;
 
 }

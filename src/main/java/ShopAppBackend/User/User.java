@@ -29,7 +29,6 @@ public class User implements UserDetails {
 
     @NotNull(message = "Password can not be null !")
     @NotEmpty(message = "Password can not be Empty !")
-    @Pattern(regexp = "[a-zA-Z0-9.]*" )
     private String password;
 
 
@@ -73,7 +72,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+       return authorization;
     }
 
 }

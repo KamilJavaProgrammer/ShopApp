@@ -23,6 +23,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.*;
@@ -69,6 +70,7 @@ public class UserService  {
 
 
 
+    @Transactional
     public Response RegistrationUser(UserDto userDto, Mailing mailing)throws MessagingException,IOException {
 
                  User user = objectMapper.convertValue(userDto,User.class);
@@ -153,31 +155,50 @@ public class UserService  {
 
 
 
+    public Response GenJsonWebToken(User user,User userInstant) throws IOException {
 
-    public ResponseEntity<String>GenJsonWebToken(User user,User userInstant) throws IOException {
+        Response response = new Response();
+
         if (passwordEncoder.matches(user.getPassword(), userInstant.getPassword())) {
 
-            String token = JWT.create()
-                    .withSubject(userInstant.getUsername())
-                    .withClaim("role",userInstant.getRole())
-                    .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))
-                    .sign(Algorithm.HMAC256(secret));
+            if(userInstant.isEnabled())
+            {
+                String token = JWT.create()
+                        .withSubject(userInstant.getUsername())
+                        .withClaim("role",userInstant.getRole())
+                        .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))
+                        .sign(Algorithm.HMAC256(secret));
 
 
-            logger.info("Sucessfull Generate JWT");
-            logsApplication.SaveToFile("Sucessfull Generate JWT from user" + userInstant.getUsername());
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(token);
+                logger.info("Sucessfull Generate JWT");
+                logsApplication.SaveToFile("Sucessfull Generate JWT from user" + userInstant.getUsername());
+                response.setStatus(200);
+                response.setMessage(token);
+
+            }
+            else
+            {
+
+                logger.warn("Account is deactive");
+                logsApplication.SaveToFile("Account is deactive");
+                response.setStatus(403);
+                response.setMessage("Account is deactive");
+            }
 
         }
         else
         {
             logger.warn("Wrong login or password");
             logsApplication.SaveToFile("Wrong login or password");
-            throw new WrongLoginData();
+            response.setStatus(401);
+            response.setMessage("Wrong login or password");
         }
+        return response;
     }
 
-    public ResponseEntity<String> LoginAdminAndGenJsonWebToken(User user) throws IOException, UserNotFoundException {
+
+    @Transactional
+    public Response LoginAdminAndGenJsonWebToken(User user) throws IOException, UserNotFoundException {
         if (userRepo.existsUserByUsername(user.getUsername())) {
 
             User user1 = userRepo.findByUsername(user.getUsername());
@@ -189,7 +210,10 @@ public class UserService  {
             {
                 logger.info("User don't be ADMIN");
                 FilterJwt.SaveToFile("User don't be ADMIN" + user1.getUsername());
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("FORBIDDEN");
+                Response response = new Response();
+                response.setMessage("Not authorized");
+                response.setStatus(401);
+                return response;
             }
         }
         else
@@ -197,15 +221,13 @@ public class UserService  {
             logger.warn("User dont exists");
             FilterJwt.SaveToFile("Failed Attempt Login User" + user.getUsername() + "." + "User dont exists");
             throw new UserNotFoundException();
-//            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("UserDontExists");
-
         }
     }
 
 
 
-
-    public ResponseEntity<String> LoginAndGenJsonWebToken(User user) throws IOException, UserNotFoundException {
+    @Transactional
+    public Response LoginAndGenJsonWebToken(User user) throws IOException, UserNotFoundException {
 
 
         if (userRepo.existsUserByUsername(user.getUsername())) {
@@ -221,20 +243,6 @@ public class UserService  {
 
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
    @Async
