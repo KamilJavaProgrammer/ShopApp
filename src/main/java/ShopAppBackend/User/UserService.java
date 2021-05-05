@@ -286,37 +286,54 @@ public class UserService  {
 
 
 
-    public String SendCodeForChangePassword(User user) throws MessagingException, IOException, InterruptedException {
+    public HttpStatus SendCodeForChangePassword(String email) throws MessagingException, IOException, InterruptedException {
 
-        if(userRepo.existsUserByEmail(user.getEmail())) {
+        if(userRepo.existsUserByEmail(email)) {
 
-            String codeVerification = this.GenerateRandomKey();
-            SendEmail(user.getEmail(), "Kod do zmiany hasła", codeVerification, false);
+            User user = userRepo.findByEmail(email);
+            SendEmail(email, "Kod do zmiany hasła", user.getCodeVerification(), false);
 
             logger.info("SendCodeToEmail");
             FilterJwt.SaveToFile("SendCodeToEmail");
-            return "OK";
+            return HttpStatus.OK;
         }
         else
         {
             logger.error("Email Dont Exists");
             FilterJwt.SaveToFile("Email dont exists");
-            return "EmailDontExists";
+            throw new EmailNotFoundException();
 
         }
     }
 
-    public String ChangePassword(User user){
+    public HttpStatus ChangePassword(User user) throws IOException {
 
         if(userRepo.existsUserByEmail(user.getEmail())){
-            User user1 = userRepo.findByEmail(user.getEmail());
-            user1.setPassword(passwordEncoder.encode(user.getPassword()));
-            userRepo.save(user1);
-            return "OK";
+
+
+            User userInstant = userRepo.findByEmail(user.getEmail());
+
+            if(user.getCodeVerification().equals(userInstant.getCodeVerification())) {
+                userInstant.setPassword(passwordEncoder.encode(user.getPassword()));
+                userRepo.save(userInstant);
+                FilterJwt.SaveToFile(userInstant + "changed password");
+                return HttpStatus.OK;
+
+            }
+            else
+
+            {
+                logger.error("CodeVerification is inncorrect");
+                return HttpStatus.NOT_ACCEPTABLE;
+
+            }
+
         }
         else
         {
-            return "Dont exists User";
+            logger.error("Email Dont Exists");
+            FilterJwt.SaveToFile("Email dont exists");
+            throw new EmailNotFoundException();
         }
     }
 

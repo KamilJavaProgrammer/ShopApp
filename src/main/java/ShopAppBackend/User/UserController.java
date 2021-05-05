@@ -2,6 +2,7 @@ package ShopAppBackend.User;
 
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -47,11 +48,17 @@ public class UserController  {
         return ResponseEntity.ok(userService.LoginAdminAndGenJsonWebToken(user));
     }
 
-    @PatchMapping("/changePassword")
-    public ResponseEntity<String> SendCodeForChangePassword(@RequestBody User user ) throws MessagingException, IOException, InterruptedException {
-     userService.SendCodeForChangePassword(user);
-     return ResponseEntity.ok(" ");
+    @PostMapping("/users/passwords")
+    public ResponseEntity<HttpStatus> SendCodeForChangePassword(@RequestBody String email) throws MessagingException, IOException, InterruptedException {
+
+        return ResponseEntity.ok(userService.SendCodeForChangePassword(email));
   }
+
+    @PatchMapping("/users/passwords")
+    public ResponseEntity<HttpStatus> ChangePassword(@RequestBody User user) throws IOException {
+
+        return ResponseEntity.ok(userService.ChangePassword(user));
+    }
 
 
   @GetMapping("/user")
