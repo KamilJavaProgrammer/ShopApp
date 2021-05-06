@@ -5,6 +5,9 @@ import ShopAppBackend.User.User;
 import ShopAppBackend.User.UserDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
+import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +28,8 @@ public class ShopAppBackendApplication {
 		SpringApplication.run(ShopAppBackendApplication.class, args);
 
 	}
+
+
 
 	@Bean
 	public ModelMapper getModelMapper(){
