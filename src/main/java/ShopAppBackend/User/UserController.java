@@ -66,4 +66,9 @@ public class UserController  {
         return ResponseEntity.ok(userService.GetUserByName(user.getName()));
     }
 
+    @GetMapping("/users")
+    public ResponseEntity<?> GetAllUsers(){
+        return ResponseEntity.ok(userService.GetAllUsers());
+    }
+
 }

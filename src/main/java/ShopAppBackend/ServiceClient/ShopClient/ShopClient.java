@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -14,7 +15,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "shopClients")
 @Data
-public class ShopClient extends Client implements Comparable<ShopClient>{
+public class ShopClient extends Client implements Comparable<ShopClient>, Serializable {
 
     private String state;
     private String email;

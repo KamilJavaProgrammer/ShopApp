@@ -28,15 +28,15 @@ public class QueueConsumer {
 
 
     @RabbitListener(queues = "testMessages")
-    private void SendMessageToUser(String text){
-        template.convertAndSend("/topic/admin", text);
+    private void SendMessageToUser(Message message ){
+        template.convertAndSend("/topic/admin",message);
 
     }
 
 
     @RabbitListener(queues = "testMessagesAdmin")
-    private void SendMessageToAdmin(String text){
-        template.convertAndSend("/topic/user", text);
+    private void SendMessageToAdmin( Message message){
+       template.convertAndSend("/topic/user", message);
     }
 
 }

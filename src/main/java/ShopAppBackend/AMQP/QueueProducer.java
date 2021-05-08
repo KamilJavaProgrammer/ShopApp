@@ -35,14 +35,16 @@ public class QueueProducer {
 
 
     @PostMapping("/messages")
-    public HttpStatus get(@RequestBody String message) {
+    public HttpStatus get(@RequestBody Message message) {
+
         rabbitTemplate.convertAndSend("testMessages", message);
         return HttpStatus.OK;
     }
 
     @PostMapping("/messagesAdmin")
-    public HttpStatus getADMIN(@RequestBody String message) {
-        rabbitTemplate.convertAndSend("testMessagesAdmin", message);
+    public HttpStatus getADMIN(@RequestBody Message message) {
+
+      rabbitTemplate.convertAndSend("testMessagesAdmin", message);
         return HttpStatus.OK;
     }
 

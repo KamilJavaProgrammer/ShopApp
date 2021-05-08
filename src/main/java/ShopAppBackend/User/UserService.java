@@ -337,5 +337,10 @@ public class UserService  {
         }
     }
 
+    public ResponseEntity<List<User>> GetAllUsers(){
+
+        return ResponseEntity.status(HttpStatus.OK).body(userRepo.findAll());
+    }
+
 }
 
