@@ -1,16 +1,19 @@
 package ShopAppBackend.AMQP;
 
 
+import ShopAppBackend.Message.Message;
+import ShopAppBackend.Message.MessageRepository;
+import ShopAppBackend.User.User;
+import ShopAppBackend.User.UserRepo;
 import org.springframework.amqp.core.AmqpAdmin;
-import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -18,13 +21,18 @@ import javax.annotation.PostConstruct;
 public class QueueProducer {
 
 
-    private AmqpAdmin amqpAdmin;
-    private RabbitTemplate rabbitTemplate;
+    private final AmqpAdmin amqpAdmin;
+    private final RabbitTemplate rabbitTemplate;
+    private final UserRepo userRepo;
+    private final MessageRepository messageRepository;
+
 
     @Autowired
-    public QueueProducer(AmqpAdmin amqpAdmin, RabbitTemplate rabbitTemplate) {
+    public QueueProducer(AmqpAdmin amqpAdmin, RabbitTemplate rabbitTemplate, UserRepo userRepo, MessageRepository messageRepository) {
         this.amqpAdmin = amqpAdmin;
         this.rabbitTemplate = rabbitTemplate;
+        this.userRepo = userRepo;
+        this.messageRepository = messageRepository;
     }
 
     @PostConstruct
@@ -38,13 +46,19 @@ public class QueueProducer {
     public HttpStatus get(@RequestBody Message message) {
 
         rabbitTemplate.convertAndSend("testMessages", message);
-        return HttpStatus.OK;
-    }
 
-    @PostMapping("/messagesAdmin")
-    public HttpStatus getADMIN(@RequestBody Message message) {
 
-      rabbitTemplate.convertAndSend("testMessagesAdmin", message);
+         Message message1 = new Message();
+         message1.setMessageText(message.getMessageText());
+         message1.setDate(message.getDate());
+        messageRepository.save(message1);
+
+        User user = userRepo.getOne(message.getAuthor().getId());
+        List<Message> list = user.getMessages();
+        list.add(message1);
+        user.setMessages(list);
+        userRepo.save(user);
+
         return HttpStatus.OK;
     }
 

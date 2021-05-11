@@ -271,11 +271,12 @@ public class UserService  {
     }
 
 
-    public ResponseEntity<UserDto> GetUserByName(String username) throws UserNotFoundException, IOException {
+    public ResponseEntity<User> GetUserByName(String username) throws UserNotFoundException, IOException {
         User user = userRepo.findByUsername(username);
         if(user != null){
-           UserDto userDto = modelMapper.map(user,UserDto.class);
-           return ResponseEntity.status(HttpStatus.OK).body(userDto);
+
+//           UserDto userDto = modelMapper.map(user,UserDto.class);
+           return ResponseEntity.status(HttpStatus.OK).body(user);
         }
         else
         {
@@ -339,6 +340,7 @@ public class UserService  {
 
     public ResponseEntity<List<User>> GetAllUsers(){
 
+        System.out.println(userRepo.findAll());
         return ResponseEntity.status(HttpStatus.OK).body(userRepo.findAll());
     }
 

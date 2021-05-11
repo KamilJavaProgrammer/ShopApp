@@ -1,5 +1,6 @@
 package ShopAppBackend.User;
 
+import ShopAppBackend.Message.Message;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,6 +15,7 @@ import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(name="users")
@@ -49,6 +51,10 @@ public class User implements UserDetails {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "shopClient_id")
     private ShopClient shopClient;
+
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<Message> messages;
 
 
     @Override

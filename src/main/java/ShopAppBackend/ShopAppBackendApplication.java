@@ -95,12 +95,13 @@ public class ShopAppBackendApplication {
 				map().setId(source.getId());
 				map().setUsername(source.getUsername());
 				map().setEmail(source.getEmail());
-//				map().setRole(source.getRole());
-//				map().setAuthorization(source.isAuthorization());
+				map().setRole(source.getRole());
+				map().setAuthorization(source.isAuthorization());
 				map().setShopClient(source.getShopClient());
 				map().setPassword(source.getPassword());
-//				map().setCodeVerification(source.getCodeVerification());
+				map().setCodeVerification(source.getCodeVerification());
 				map().setChangedPassword(source.getChangedPassword());
+				map().setMessages(source.getMessages());
 
 			}
 		});
