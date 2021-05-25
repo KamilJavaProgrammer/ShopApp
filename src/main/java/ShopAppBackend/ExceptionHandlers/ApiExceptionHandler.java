@@ -16,7 +16,7 @@ import javax.validation.constraints.Email;
 public class ApiExceptionHandler  extends ResponseEntityExceptionHandler {
 
 
-    @ExceptionHandler({UserNotFoundException.class,EmailNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class,EmailNotFoundException.class,IllegalArgumentException.class})
     public ResponseEntity<Object> handleWebException(RuntimeException e, WebRequest webRequest) {
 
         return handleExceptionInternal(e,e.getMessage(),HttpHeaders.EMPTY,HttpStatus.BAD_REQUEST,webRequest);

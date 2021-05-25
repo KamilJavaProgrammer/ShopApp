@@ -2,12 +2,10 @@ package ShopAppBackend.AMQP;
 
 import ShopAppBackend.Message.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 
 
@@ -25,9 +23,20 @@ public class QueueConsumer {
     }
 
 
-    @RabbitListener(queues = "testMessages")
+
+    @RabbitListener(queues = "testMessages4")
     private void SendMessageToAdmin(Message message ){
-        template.convertAndSend("/topic/" + message.getRecipient(),message);
+
+        if(message.getRecipient() ==null || message.getRecipient().getUsername() ==null)
+        {
+            throw new NullPointerException();
+        }
+        else
+
+        {
+            template.convertAndSend("/topic/" + message.getRecipient().getUsername(),message);
+
+        }
     }
 
 

@@ -1,7 +1,7 @@
 package ShopAppBackend.Product;
 import ShopAppBackend.FrontMainPageManagement.ArticleLine.ArticleLine;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.Proxy;
 import ShopAppBackend.Product.Category.Category;
 import ShopAppBackend.Product.SubCategory.SubCategory;
@@ -13,7 +13,10 @@ import java.util.Set;
 @Entity
 @Table(name="products")
 @Proxy(lazy = false)
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class Product implements Comparable<Product> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +37,10 @@ public class Product implements Comparable<Product> {
     private String description;
     private String wareHouseplace;
 
+
+
+
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "subcategoryid")
@@ -53,7 +60,31 @@ public class Product implements Comparable<Product> {
     private int quantity;
 
 
-
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", date='" + date + '\'' +
+                ", productCategory='" + productCategory + '\'' +
+                ", productSubCategory='" + productSubCategory + '\'' +
+                ", productName='" + productName + '\'' +
+                ", manufacturer='" + manufacturer + '\'' +
+                ", serialNumber='" + serialNumber + '\'' +
+                ", model='" + model + '\'' +
+                ", productPrice='" + productPrice + '\'' +
+                ", pathToFile='" + pathToFile + '\'' +
+                ", numberOfItems=" + numberOfItems +
+                ", location='" + location + '\'' +
+                ", cod='" + cod + '\'' +
+                ", status='" + status + '\'' +
+                ", description='" + description + '\'' +
+                ", wareHouseplace='" + wareHouseplace + '\'' +
+                ", subCategory=" + subCategory +
+                ", category1=" + category1 +
+//                ", articleLineList=" + articleLineList +
+                ", quantity=" + quantity +
+                '}';
+    }
 
     @Override
     public int compareTo(Product o) {

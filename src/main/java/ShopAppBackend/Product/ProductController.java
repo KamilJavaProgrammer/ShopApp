@@ -71,12 +71,35 @@ public class ProductController {
    }
 
 
-   @PostMapping("/name")
-    public ResponseEntity<?> GetProductList(@RequestPart(name = "path") String path){
+    @GetMapping("/name/{page}")
+    public ResponseEntity<List<Product>> GetProductListsa(@PathVariable Integer page,@RequestParam(name = "name")String name){
 
-        return ResponseEntity.ok(productService.GetMainProducts(path.toLowerCase()));
+        return ResponseEntity.ok(productService.GetMainProducts(page,name));
 
-      }
+    }
+
+
+
+
+
+//   @PostMapping("/name")
+//    public ResponseEntity<?> GetProductList(@RequestPart(name = "path") String path){
+//
+//        return ResponseEntity.ok(productService.GetMainProducts(path.toLowerCase()));
+//
+//      }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

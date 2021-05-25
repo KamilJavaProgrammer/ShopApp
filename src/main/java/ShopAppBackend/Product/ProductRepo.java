@@ -1,5 +1,7 @@
 package ShopAppBackend.Product;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -47,8 +49,9 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
 
      Optional<Product> findByProductName(String productName);
 
-
-
+    @Query(value = "SELECT DISTINCT  * FROM products where product_category like %:name% or " +
+                   "product_sub_category like %:name% or product_name like %:name% ",nativeQuery = true)
+       List<Product> findAllByCategory12(String name, Pageable pageable);
 
       Long countByProductSubCategory(String productSubCategory);
       Long countByManufacturer(String model);

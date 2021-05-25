@@ -7,8 +7,11 @@ import ShopAppBackend.ServiceClient.ShopClient.ShopClientService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.mysql.cj.xdevapi.JsonParser;
 import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +86,7 @@ public class UserService  {
                 if (!userRepo.existsUserByUsername(user.getUsername())) {
 
                     user.setAuthorization(false);
-                    user.setRole("USER");
+                    user.setRole("ADMIN");
                     user.setShopClient(shopClientService.CreateNewShopClient(user));
 
                     this.codeVerification = this.GenerateRandomKey();
@@ -271,15 +274,21 @@ public class UserService  {
     }
 
 
-    public ResponseEntity<User> GetUserByName(String username) throws UserNotFoundException, IOException {
+    public User GetUserByName(String username) throws UserNotFoundException, IOException {
+        System.out.println("jestem w metodzie");
+        System.out.println("jestem w metodzie");
+
         User user = userRepo.findByUsername(username);
         if(user != null){
 
-//           UserDto userDto = modelMapper.map(user,UserDto.class);
-           return ResponseEntity.status(HttpStatus.OK).body(user);
+
+//           UserDto userDto  = modelMapper.map(user,UserDto.class);
+
+            return user;
         }
         else
         {
+            System.out.println("jestem w else");
             throw new UserNotFoundException();
         }
 
@@ -338,10 +347,19 @@ public class UserService  {
         }
     }
 
-    public ResponseEntity<List<User>> GetAllUsers(){
+    public List<UserDto> GetAllUsers(){
 
-        System.out.println(userRepo.findAll());
-        return ResponseEntity.status(HttpStatus.OK).body(userRepo.findAll());
+            List<User> users  = userRepo.findAll();
+            List<UserDto> usersDto  = new ArrayList<>();
+
+            users.forEach(user -> {
+                user.setShopClient(null);
+                user.setPassword(null);
+                user.setCodeVerification(null);
+                usersDto.add(modelMapper.map(user,UserDto.class));
+            });
+
+           return usersDto;
     }
 
 }

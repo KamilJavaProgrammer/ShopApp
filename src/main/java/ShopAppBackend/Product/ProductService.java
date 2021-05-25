@@ -10,6 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -31,7 +35,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -354,39 +361,59 @@ public class ProductService extends Thread {
 
 
 
+    public List<Product>  GetMainProducts(Integer page,String name) {
 
+        Pattern checkInteger = Pattern.compile("[0-9]*");
+        Matcher matcher = checkInteger.matcher(page.toString());
 
-    public ResponseEntity<List<Product>>  GetMainProducts(String path) {
-
-        if(path != null) {
-
-            String[] data = path.split("/");
-
-            if (data.length == 1) {
-                return ResponseEntity.status(HttpStatus.OK).body(this.productRepo.GetMainItems(data[0]));
-                }
-
-            else if (data.length == 2) {
-
-
-                   return ResponseEntity.status(HttpStatus.OK).body( productRepo.GetMainItems(data[0]).stream().
-                           filter(product -> product.getProductSubCategory().toLowerCase().equals(data[1].toLowerCase())).collect(Collectors.toList()));
-                }
-
-            else {
-
-                return ResponseEntity.status(HttpStatus.OK).body(productRepo.GetMainItems(data[0]).stream().
-                        filter(product -> product.getProductSubCategory().toLowerCase().equals(data[1].toLowerCase())).
-                        filter(product -> product.getManufacturer().toLowerCase().equals(data[2].toLowerCase())).collect(Collectors.toList()));
-
-                 }
-             }
-
-
-        else {
-             throw new IllegalStateException();
+        if(matcher.matches())
+        {
+            Pageable pageable = PageRequest.of(page, 9, Sort.by("product_name").ascending());
+             List<Product> products = productRepo.findAllByCategory12(name,pageable);
+            return  (products.isEmpty())?Collections.emptyList():products;
         }
+        else
+            {
+            throw new   IllegalArgumentException();
+            }
     }
+
+
+
+
+
+//    public ResponseEntity<List<Product>>  GetMainProducts(String path) {
+//
+//        if(path != null) {
+//
+//
+//            String[] data = path.split("/");
+//
+//            if (data.length == 1) {
+//                return ResponseEntity.status(HttpStatus.OK).body(this.productRepo.GetMainItems(data[0]));
+//                }
+//
+//            else if (data.length == 2) {
+//
+//
+//                   return ResponseEntity.status(HttpStatus.OK).body( productRepo.GetMainItems(data[0]).stream().
+//                           filter(product -> product.getProductSubCategory().toLowerCase().equals(data[1].toLowerCase())).collect(Collectors.toList()));
+//                }
+//
+//            else {
+//
+//                return ResponseEntity.status(HttpStatus.OK).body(productRepo.GetMainItems(data[0]).stream().
+//                        filter(product -> product.getProductSubCategory().toLowerCase().equals(data[1].toLowerCase())).
+//                        filter(product -> product.getManufacturer().toLowerCase().equals(data[2].toLowerCase())).collect(Collectors.toList()));
+//
+//                 }
+//             }
+//
+//
+//        else {
+//             throw new IllegalStateException();
+//        }
+//    }
 
 
 

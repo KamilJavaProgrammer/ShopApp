@@ -1,5 +1,6 @@
 package ShopAppBackend.User;
 import ShopAppBackend.Message.Message;
+import com.mysql.cj.Messages;
 import lombok.Data;
 import ShopAppBackend.ServiceClient.ShopClient.ShopClient;
 
@@ -8,11 +9,14 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
 @Data
-public class UserDto {
+public class UserDto  implements Serializable {
 
     public Long id;
 
@@ -30,5 +34,7 @@ public class UserDto {
     private List<Message> messages;
 
 
+    public UserDto() {
+    }
 }
 

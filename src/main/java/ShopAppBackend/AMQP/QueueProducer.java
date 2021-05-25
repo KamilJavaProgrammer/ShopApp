@@ -3,6 +3,7 @@ package ShopAppBackend.AMQP;
 
 import ShopAppBackend.Message.Message;
 import ShopAppBackend.Message.MessageRepository;
+import ShopAppBackend.Message.MessageState;
 import ShopAppBackend.User.User;
 import ShopAppBackend.User.UserRepo;
 import org.springframework.amqp.core.AmqpAdmin;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @RestController
@@ -33,31 +35,46 @@ public class QueueProducer {
         this.rabbitTemplate = rabbitTemplate;
         this.userRepo = userRepo;
         this.messageRepository = messageRepository;
+
     }
 
     @PostConstruct
     public void createQueues() {
-        amqpAdmin.declareQueue(new Queue("testMessages", true));
-        amqpAdmin.declareQueue(new Queue("testMessagesAdmin", true));
+        amqpAdmin.declareQueue(new Queue("testMessages4", true));
     }
 
 
-    @PostMapping("/messages")
+    @Transactional
+    @PutMapping("/messages")
     public HttpStatus get(@RequestBody Message message) {
 
-        rabbitTemplate.convertAndSend("testMessages", message);
+        rabbitTemplate.convertAndSend("testMessages4", message);
 
 
-         Message message1 = new Message();
-         message1.setMessageText(message.getMessageText());
-         message1.setDate(message.getDate());
-        messageRepository.save(message1);
-
+        messageRepository.save(message);
         User user = userRepo.getOne(message.getAuthor().getId());
         List<Message> list = user.getMessages();
-        list.add(message1);
+        list.add(message);
         user.setMessages(list);
         userRepo.save(user);
+
+        return HttpStatus.OK;
+    }
+
+
+    @Transactional
+    @PatchMapping("/messages")
+    public HttpStatus ChangeMessageState(@RequestBody List<Message> messages) {
+
+
+        messages.forEach(message -> {
+           Message messageInstant =  messageRepository.getOne(message.getId());
+           messageInstant.setState(MessageState.displayed.name());
+           messageRepository.save(messageInstant);
+
+        });
+
+
 
         return HttpStatus.OK;
     }
