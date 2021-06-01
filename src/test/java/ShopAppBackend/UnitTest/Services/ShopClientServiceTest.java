@@ -1,11 +1,11 @@
 package ShopAppBackend.UnitTest.Services;
 
-import ShopAppBackend.Adress.Address;
-import ShopAppBackend.Adress.AddressRepo;
-import ShopAppBackend.ServiceClient.ShopClient.ShopClient;
-import ShopAppBackend.ServiceClient.ShopClient.ShopClientNotFound;
-import ShopAppBackend.ServiceClient.ShopClient.ShopClientRepository;
-import ShopAppBackend.ServiceClient.ShopClient.ShopClientService;
+import ShopAppBackend.Entities.Address;
+import ShopAppBackend.Repositories.AddressRepo;
+import ShopAppBackend.Entities.ShopClient;
+import ShopAppBackend.Exceptions.ShopClientNotFound;
+import ShopAppBackend.Repositories.ShopClientRepository;
+import ShopAppBackend.Services.ShopClientService;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;

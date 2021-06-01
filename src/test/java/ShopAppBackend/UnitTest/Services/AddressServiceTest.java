@@ -1,14 +1,12 @@
 package ShopAppBackend.UnitTest.Services;
 
-import ShopAppBackend.Adress.Address;
-import ShopAppBackend.Adress.AddressRepo;
-import ShopAppBackend.Adress.AddressService;
-import ShopAppBackend.Product.ProductNotFound;
+import ShopAppBackend.Entities.Address;
+import ShopAppBackend.Repositories.AddressRepo;
+import ShopAppBackend.Services.AddressService;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 

@@ -1,21 +1,18 @@
 package ShopAppBackend;
 
-import ShopAppBackend.CompleteOrder.CompleteOrder;
-import ShopAppBackend.User.User;
-import ShopAppBackend.User.UserDto;
+import ShopAppBackend.Entities.CompleteOrder;
+import ShopAppBackend.Entities.User;
+import ShopAppBackend.DTOs.UserDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
-import org.springframework.amqp.core.*;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.client.RestTemplate;
-import ShopAppBackend.CompleteOrder.CompleteOrderDTO;
-import ShopAppBackend.Invoice.Invoice;
-import ShopAppBackend.Invoice.InvoiceDTO;
+import ShopAppBackend.DTOs.CompleteOrderDTO;
+import ShopAppBackend.Entities.Invoice;
+import ShopAppBackend.DTOs.InvoiceDTO;
 
 @SpringBootApplication
 @EnableAsync

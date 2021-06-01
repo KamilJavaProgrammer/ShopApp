@@ -1,22 +1,16 @@
 package ShopAppBackend.UnitTest.Services;
 
-import ShopAppBackend.Product.Product;
-import ShopAppBackend.Product.ProductNotFound;
-import ShopAppBackend.Product.ProductRepo;
-import ShopAppBackend.Product.ProductService;
+import ShopAppBackend.Entities.Product;
+import ShopAppBackend.Exceptions.ProductNotFound;
+import ShopAppBackend.Repositories.ProductRepo;
+import ShopAppBackend.Services.ProductService;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 
