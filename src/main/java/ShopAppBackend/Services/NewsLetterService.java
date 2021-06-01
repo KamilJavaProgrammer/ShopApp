@@ -43,6 +43,7 @@ public class NewsLetterService  {
     @Transactional
     public HttpStatus RemoveObserver(Integer id){
         Optional<NewsLetter> newsLetter = newsletterRepository.findById(id);
+
         if(newsLetter.isPresent())
         {
             newsletterRepository.deleteById(id);
