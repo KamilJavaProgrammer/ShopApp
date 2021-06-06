@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 @Validated
-@RequestMapping("/")
 public class DataController {
 
     private final DataServiceMongo dataServiceMongo;
@@ -24,12 +23,12 @@ public class DataController {
     }
 
 
-    @GetMapping("data/{id}")
+    @GetMapping("/data/{id}")
     public ResponseEntity<Data> GetDataById(@PathVariable @NotNull String id){
       return  ResponseEntity.status(HttpStatus.OK).body(dataServiceMongo.GetDataById(id));
     }
 
-    @PostMapping("data")
+    @PostMapping("/data")
     public ResponseEntity<HttpStatus> AddDataToDatabase(@RequestBody Data data){
         return  ResponseEntity.status(HttpStatus.OK).body(dataServiceMongo.SaveDataToMongoDatabase(data));
     }

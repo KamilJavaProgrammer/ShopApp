@@ -39,7 +39,7 @@ public class QueueProducer {
     }
 
     @PostConstruct
-    public void createQueues() {
+    public void createQueues(){
         amqpAdmin.declareQueue(new Queue("testMessages4", true));
     }
 

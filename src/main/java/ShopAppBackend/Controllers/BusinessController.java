@@ -19,7 +19,7 @@ public class BusinessController {
         this.businessService = businessService;
     }
 
-    @GetMapping("/business")
+    @GetMapping("/businesses")
     public ResponseEntity<?> GetAllBusiness(){
         return ResponseEntity.ok(businessService.GetAllBusinessFromDatabase());
     }

@@ -10,6 +10,7 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/subcategories")
 public class SubCategoryController {
 
     private SubCategoryService subCategoryService;
@@ -20,13 +21,13 @@ public class SubCategoryController {
     }
 
 
-    @PostMapping("/subcategory")
+    @PostMapping("")
     public ResponseEntity<Map<String,Long>> ReturnPartlyCategory(@RequestPart(name = "path") String path){
 
         return ResponseEntity.ok(this.subCategoryService.GetCategories(path.toLowerCase()));
     }
 
-    @PostMapping("/subcategory/manufacturers")
+    @PostMapping("/manufacturers")
     public ResponseEntity<Map<String,Long>> ReturnPartlyCategory1(@RequestPart(name = "path") String path,
                                                                   @RequestPart(name = "subCategoryName") String subCategoryName){
 
@@ -34,7 +35,7 @@ public class SubCategoryController {
         return ResponseEntity.ok(this.subCategoryService.GetManufacturers(path.toLowerCase(),subCategoryName.toLowerCase()));
     }
 
-    @GetMapping("/subcategory")
+    @GetMapping("")
     public ResponseEntity<List<String>> ReturnAllSubCategories(){
         return ResponseEntity.ok(subCategoryService.GetAllSubCategories());
     }

@@ -11,21 +11,26 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import java.io.IOException;
 import java.util.List;
 
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/users")
+@Validated
 
 public class UserController  {
 
     private final UserService userService;
     private final UserRepo userRepo;
+    private final static String SUBJECT = "Kod weryfikacyjny";
 
     @Autowired
     public UserController(UserService userService, UserRepo userRepo) {
@@ -35,8 +40,8 @@ public class UserController  {
 
 
    @PostMapping("/registration")
-   public ResponseEntity<Response> RegistrationUser(@Valid @RequestBody UserDto userDto) throws MessagingException, IOException, InterruptedException {
-         return ResponseEntity.ok(userService.RegistrationUser(userDto, () -> userService.SendEmail(userDto.getEmail(),"Kod weryfikacyjny",userRepo.findByUsername(userDto.getUsername()).getCodeVerification(),false)));
+   public ResponseEntity<Response> RegistrationUser(@Valid @RequestBody UserDto userDto) throws MessagingException, IOException {
+         return ResponseEntity.ok(userService.RegistrationUser(userDto, () -> userService.SendEmail(userDto.getEmail(),SUBJECT,userRepo.findByUsername(userDto.getUsername()).getCodeVerification(),false)));
    }
 
     @PatchMapping("/verification")
@@ -54,31 +59,26 @@ public class UserController  {
         return ResponseEntity.ok(userService.LoginAdminAndGenJsonWebToken(user));
     }
 
-    @PostMapping("/users/passwords")
-    public ResponseEntity<HttpStatus> SendCodeForChangePassword(@RequestBody String email) throws MessagingException, IOException, InterruptedException {
+
+    @PostMapping("/password")
+    public ResponseEntity<HttpStatus> SendCodeForChangePassword(@RequestBody @Email String email) throws MessagingException, IOException, InterruptedException {
 
         return ResponseEntity.ok(userService.SendCodeForChangePassword(email));
   }
 
-    @PatchMapping("/users/passwords")
-    public ResponseEntity<HttpStatus> ChangePassword(@RequestBody User user) throws IOException {
-
-        return ResponseEntity.ok(userService.ChangePassword(user));
-    }
-
-
-  @GetMapping("/user")
+   @GetMapping("/auth")
     public User GetUser(@AuthenticationPrincipal UsernamePasswordAuthenticationToken user) throws UserNotFoundException, IOException {
-//
-//       return ResponseEntity.ok(userService.GetUserByName(user.getName()));
-
-      return userService.GetUserByName(user.getName());
-
+        return userService.GetUserByName(user.getName());
     }
 
-    @GetMapping("/users")
+    @GetMapping("/all")
     public ResponseEntity<List<UserDto>> GetAllUsers(){
         return ResponseEntity.ok(userService.GetAllUsers());
+    }
+
+    @PatchMapping("/password")
+    public ResponseEntity<HttpStatus> ChangePassword(@RequestBody User user) throws IOException {
+        return ResponseEntity.ok(userService.ChangePassword(user));
     }
 
 }

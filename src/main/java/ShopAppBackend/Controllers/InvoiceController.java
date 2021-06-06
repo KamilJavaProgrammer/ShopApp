@@ -14,6 +14,7 @@ import java.sql.SQLException;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/invoices")
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
@@ -23,18 +24,18 @@ public class InvoiceController {
         this.invoiceService = invoiceService;
     }
 
-    @GetMapping("/invoice/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> GetInvoiceById(@PathVariable Long id) throws FileNotFoundException {
         return ResponseEntity.ok(invoiceService.GetInvoiceById(id));
     }
 
-    @GetMapping("/invoice/all")
+    @GetMapping("")
     public ResponseEntity<?> GetAllInvoices(){
         return invoiceService.GetAllInvoices();
     }
 
 
-    @PostMapping("/invoice")
+    @PostMapping("")
     public ResponseEntity<?> AddOneInvoice(@RequestBody Invoice invoice) throws IOException, SQLException {
 
         Company company = new Company();

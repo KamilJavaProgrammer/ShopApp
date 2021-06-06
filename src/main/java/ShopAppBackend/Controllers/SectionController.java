@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/sections")
 public class SectionController {
 
 
@@ -20,22 +21,21 @@ public class SectionController {
         this.sectionService = sectionService;
     }
 
-    @GetMapping("/section")
+    @GetMapping("")
     public ResponseEntity<?> GetAllSections(){
         return ResponseEntity.ok(sectionService.GetAllSectionsFromDatabase());
     }
 
-    @PostMapping("/section")
+    @PostMapping("")
     public ResponseEntity<?> AddOneSection(@RequestBody Section section){
 
         return ResponseEntity.ok(sectionService.AddOneSectionToDatabase(section));
     }
 
-    @DeleteMapping("/section/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> DeleteSectionById(@PathVariable Integer id){
 
         return ResponseEntity.ok(sectionService.DeleteOneSectionById(id));
     }
-
 
 }

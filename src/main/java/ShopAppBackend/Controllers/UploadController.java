@@ -1,6 +1,8 @@
 package ShopAppBackend.Controllers;
 
+import ShopAppBackend.Services.ProductService;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,12 @@ import java.nio.file.Files;
 public class UploadController {
 
 
+    private ProductService productService;
+
+    @Autowired
+    public UploadController(ProductService productService) {
+        this.productService = productService;
+    }
 
     @GetMapping("image/{name}")
     public ResponseEntity showImage(@PathVariable String name) throws IOException {
@@ -25,13 +33,14 @@ public class UploadController {
             return ResponseEntity.notFound().build();
         }
 
-
-
         return ResponseEntity.ok()
                .contentType(MediaType.valueOf(URLConnection.guessContentTypeFromName(name)))
                 .body(Files.readAllBytes(file.toPath()));
 
     }
+
+
+
 
 
 }

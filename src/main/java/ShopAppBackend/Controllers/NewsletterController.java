@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 @Validated
-public class NewsletterController {
+public class NewsletterController{
 
     private final NewsLetterService newsLetterService;
 

@@ -26,7 +26,7 @@ public class CompleteOrderController {
 
     }
 
-    @GetMapping("/order")
+    @GetMapping("/orders")
     public ResponseEntity<?> GetAllOrdersForUser(@AuthenticationPrincipal UsernamePasswordAuthenticationToken user) {
         return ResponseEntity.ok(completeOrderService.GetAllOrdersByUser(user.getName()));
     }
@@ -36,13 +36,13 @@ public class CompleteOrderController {
 //        return ResponseEntity.ok(completeOrderService.GetAllOrdersByUserId(id));
 //    }
 
-    @PostMapping("/order")
+    @PostMapping("/orders")
     public ResponseEntity<HttpStatus> TakeOrder(@RequestBody CompleteOrder completeOrder) throws IOException, SQLException {
         return ResponseEntity.ok(completeOrderService.AddOrderToDatabase(completeOrder));
     }
 
 
-    @GetMapping("/order/all")
+    @GetMapping("/orders/all")
     public ResponseEntity<List<CompleteOrder>> GetAllOrders() {
 
         return ResponseEntity.status(HttpStatus.OK).body(completeOrderService.GetAllOrders());

@@ -7,29 +7,37 @@ import ShopAppBackend.Exceptions.ProductNotFound;
 import ShopAppBackend.Repositories.ProductRepo;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Request;
+import org.apache.coyote.Response;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import ShopAppBackend.Entities.Category;
 import ShopAppBackend.Repositories.CategoryRepository;
 import ShopAppBackend.Entities.SubCategory;
 import ShopAppBackend.Repositories.SubCategoryRepository;
 
+import javax.mail.Multipart;
 import javax.transaction.Transactional;
 import java.io.*;
 import java.net.MalformedURLException;
+import java.net.URLConnection;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -49,22 +57,28 @@ public class ProductService extends Thread {
     public ModelMapper modelMapper;
     private SubCategoryRepository subCategoryRepository;
     private JavaMailSender javaMailSender;
-
+    private RestTemplate restTemplate;
+    public final String apiKey;
 
 
     @Autowired
-    public ProductService(ProductRepo productRepo, ModelMapper modelMapper, SubCategoryRepository subCategoryRepository,  JavaMailSender javaMailSender, CategoryRepository categoryRepository) {
-       this.productRepo = productRepo;
-       this.modelMapper = modelMapper;
-       this.subCategoryRepository = subCategoryRepository;
-       this.javaMailSender = javaMailSender;
-       this.categoryRepository = categoryRepository;
-   }
+    public ProductService(@Value("${removebg.apikey}") String apiKey, RestTemplate restTemplate, ProductRepo productRepo, ModelMapper modelMapper, SubCategoryRepository subCategoryRepository, JavaMailSender javaMailSender, CategoryRepository categoryRepository) {
+        this.productRepo = productRepo;
+        this.modelMapper = modelMapper;
+        this.subCategoryRepository = subCategoryRepository;
+        this.javaMailSender = javaMailSender;
+        this.categoryRepository = categoryRepository;
+        this.restTemplate = restTemplate;
+        this.apiKey = apiKey;
+    }
+
+  
 
     @Transactional
     public HttpStatus AddProductToDatabase (String productCategory, String productSubCategory, String productName, String manufacturer, String serialNumber,
                                             String model, String productPrice, Integer numberOfItems, String location,
                                             String cod, String status, String description,String placeWarehouse,  MultipartFile file) {
+
 
 
         if (!productRepo.existsByProductName(productName)) {
