@@ -5,8 +5,10 @@ import ShopAppBackend.Entities.Invoice;
 import ShopAppBackend.Services.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -15,6 +17,7 @@ import java.sql.SQLException;
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/invoices")
+@Validated
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
@@ -25,7 +28,7 @@ public class InvoiceController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> GetInvoiceById(@PathVariable Long id) throws FileNotFoundException {
+    public ResponseEntity<?> GetInvoiceById(@PathVariable @NotNull Long id) throws FileNotFoundException {
         return ResponseEntity.ok(invoiceService.GetInvoiceById(id));
     }
 

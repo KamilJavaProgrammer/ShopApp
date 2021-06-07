@@ -3,6 +3,7 @@ package ShopAppBackend.Services;
 
 import ShopAppBackend.Entities.ArticleLine;
 import ShopAppBackend.Entities.Product;
+import ShopAppBackend.Exceptions.ArticleLineNotFoundException;
 import ShopAppBackend.Repositories.ArticleLineRepository;
 import ShopAppBackend.Repositories.ProductRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ArticleLineService {
@@ -28,7 +28,7 @@ public class ArticleLineService {
 
 
     @Transactional
-    public ResponseEntity<HttpStatus> AddOneArticleLineToDatabase(ArticleLine articleLine){
+    public HttpStatus AddOneArticleLineToDatabase(ArticleLine articleLine){
 
         ArticleLine articleLineInstant = new ArticleLine();
         articleLineInstant.setName(articleLine.getName());
@@ -42,21 +42,21 @@ public class ArticleLineService {
         articleLineRepository.save(articleLine);
 
 
-        return ResponseEntity.ok(HttpStatus.NO_CONTENT);
+        return HttpStatus.CREATED;
     }
 
-    public ResponseEntity<List<ArticleLine>> GetAllArticleLineFromDatabase(){
+    public List<ArticleLine> GetAllArticleLineFromDatabase(){
 
         List<ArticleLine> articleLineList = articleLineRepository.findAll();
+        return (articleLineList.isEmpty()) ? Collections.emptyList(): articleLineList;
 
-        return ResponseEntity.status(HttpStatus.OK).body(articleLineList);
     }
 
     @Transactional
     public ResponseEntity<HttpStatus> DeleteOneArticleLineById(Integer id){
 
-        articleLineRepository.deleteById(id);
-
+        Optional<ArticleLine> articleLine = articleLineRepository.findById(id);
+        articleLineRepository.delete(articleLine.orElseThrow(ArticleLineNotFoundException::new));
         return ResponseEntity.ok(HttpStatus.NO_CONTENT);
     }
 }

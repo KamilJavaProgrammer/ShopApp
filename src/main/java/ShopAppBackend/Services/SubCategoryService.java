@@ -64,9 +64,7 @@ public class SubCategoryService {
 
             if (subCategoryName != null) {
 
-
                 List<String> manufacturers = productRepo.GetManufactures(data[0],subCategoryName);
-                System.out.println(manufacturers +"jeden");
                 manufacturers.removeIf(Objects::isNull);
                 manufacturers.removeIf(s -> s.equals("undefined"));
                 Map<String, Long> map = new HashMap<>();

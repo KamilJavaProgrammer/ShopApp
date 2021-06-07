@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "http://localhost:4200")
 public class ProductBasketController{
 
-    private ProductBasketService productBasketService;
+    private final ProductBasketService productBasketService;
 
     @Autowired
     public ProductBasketController(ProductBasketService productBasketService) {

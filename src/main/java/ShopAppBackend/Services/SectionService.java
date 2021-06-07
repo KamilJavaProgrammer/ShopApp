@@ -1,8 +1,11 @@
 package ShopAppBackend.Services;
 
 
+import ShopAppBackend.Entities.ArticleLine;
 import ShopAppBackend.Entities.Section;
 import ShopAppBackend.Entities.SectionCategory;
+import ShopAppBackend.Exceptions.ArticleLineNotFoundException;
+import ShopAppBackend.Exceptions.SectionNotFoundException;
 import ShopAppBackend.Repositories.SectionCategoryRepository;
 import ShopAppBackend.Entities.SectionSubCategory;
 import ShopAppBackend.Repositories.SectionSubCategoryRepository;
@@ -31,9 +34,10 @@ public class SectionService {
         this.sectionRepository = sectionRepository;
     }
 
-    public ResponseEntity<List<Section>> GetAllSectionsFromDatabase() {
+    public List<Section> GetAllSectionsFromDatabase() {
         List<Section> sections = sectionRepository.findAll();
-        return ResponseEntity.status(HttpStatus.OK).body(sections);
+        return (sections.isEmpty()) ? Collections.emptyList(): sections;
+
     }
 
     @Transactional
@@ -79,12 +83,12 @@ public class SectionService {
 
 
     @Transactional
-    public ResponseEntity<HttpStatus> DeleteOneSectionById(Integer id){
-
-        sectionRepository.deleteById(id);
-
-        return ResponseEntity.ok(HttpStatus.NO_CONTENT);
+    public HttpStatus DeleteOneSectionById(Integer id){
+        Optional<Section> section = sectionRepository.findById(id);
+        sectionRepository.delete(section.orElseThrow(SectionNotFoundException::new));
+        return HttpStatus.NO_CONTENT;
     }
+
 }
 
 

@@ -5,11 +5,15 @@ import ShopAppBackend.Entities.Section;
 import ShopAppBackend.Services.SectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.NotNull;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/sections")
+@Validated
 public class SectionController {
 
 
@@ -33,7 +37,7 @@ public class SectionController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> DeleteSectionById(@PathVariable Integer id){
+    public ResponseEntity<?> DeleteSectionById(@PathVariable @NotNull Integer id){
 
         return ResponseEntity.ok(sectionService.DeleteOneSectionById(id));
     }

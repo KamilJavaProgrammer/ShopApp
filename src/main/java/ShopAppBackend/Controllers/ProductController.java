@@ -2,72 +2,57 @@ package ShopAppBackend.Controllers;
 import ShopAppBackend.Entities.Product;
 import ShopAppBackend.Exceptions.ProductNotFound;
 import ShopAppBackend.Services.ProductService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotNull;
 import java.io.FileNotFoundException;
 import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(value = "/products")
+@Validated
 public class ProductController{
 
     private final ProductService productService;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, ObjectMapper objectMapper) {
         this.productService = productService;
+        this.objectMapper = objectMapper;
     }
+
 
     @PostMapping()
-        public ResponseEntity<HttpStatus> GetDataFromAngular(@RequestParam(name = "productCategory") String productCategory,
-                                                    @RequestParam(name = "productSubCategory",required = false) String productSubCategory,
-                                                    @RequestParam(name = "productName") String productName,
-                                                    @RequestParam(name = "manufacturer",required = false)  String manufacturer,
-                                                    @RequestParam(name = "serialNumber",required = false) String serialNumber,
-                                                    @RequestParam(name = "model",required = false) String model,
-                                                    @RequestParam(name = "productPrice") String productPrice,
-                                                    @RequestParam(name = "numberOfItems") Integer numberOfItems,
-                                                    @RequestParam(name = "location") String location,
-                                                    @RequestParam(name = "cod") String cod,
-                                                    @RequestParam(name = "status") String status,
-                                                    @RequestParam(name = "description") String description,
-                                                    @RequestParam(name = "placeWarehouse") String placeWarehouse,
-                                                    @RequestParam(value = "fileupload" ,required = false) MultipartFile file  ){
+    public ResponseEntity<HttpStatus> GetDataFromAngular(@RequestParam(name = "product") String json,
+                                                         @RequestParam(name = "fileupload") MultipartFile file) throws JsonProcessingException {
 
-
-
-        return  ResponseEntity.ok( this.productService.AddProductToDatabase(productCategory,productSubCategory,productName,manufacturer,serialNumber,model,
-                productPrice,numberOfItems,location,cod,status,description,placeWarehouse,file));
+        Product product = objectMapper.readValue(json,Product.class);
+        return  ResponseEntity.ok( this.productService.AddProductToDatabase(product,file));
     }
 
-
-
-
-
-
-
     @GetMapping("/all")
-    public ResponseEntity<?> GetAllProducts(){
-
+    public ResponseEntity<List<Product>> GetAllProducts(){
         return ResponseEntity.ok(productService.GetAllProducts());
    }
 
     @GetMapping("/parts")
-    public ResponseEntity<?> GetAllProductsByWarehousePlace(@RequestParam(value = "place") String place){
+    public ResponseEntity<List<Product> > GetAllProductsByWarehousePlace(@RequestParam(value = "place") String place){
         return ResponseEntity.ok(productService.GetAllProductsByWarehousePlace(place));
     }
 
 
     @DeleteMapping()
-   public ResponseEntity<?> DeleteMoreProducts(@RequestBody List<Product> products){
+   public ResponseEntity<HttpStatus> DeleteMoreProducts(@RequestBody List<Product> products){
         return ResponseEntity.ok(productService.DeleteMoreProducts(products));
    }
 
@@ -83,33 +68,8 @@ public class ProductController{
 
     }
 
-
-
-
-
-//   @PostMapping("/name")
-//    public ResponseEntity<?> GetProductList(@RequestPart(name = "path") String path){
-//
-//        return ResponseEntity.ok(productService.GetMainProducts(path.toLowerCase()));
-//
-//      }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Product>> GetOneProduct(@PathVariable Long id) throws ProductNotFound {
+    public ResponseEntity<Product> GetOneProduct(@PathVariable @NotNull Long id) throws ProductNotFound {
         return ResponseEntity.ok(this.productService.GetOneProductFromDatabase(id));
     }
 
@@ -117,85 +77,30 @@ public class ProductController{
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> DeleteProduct(@PathVariable Long id) throws FileNotFoundException {
+    public ResponseEntity<HttpStatus> DeleteProduct(@PathVariable @NotNull Long id) throws FileNotFoundException {
         return ResponseEntity.ok(this.productService.DeleteProductInDatabase(id));
 
     }
-//    @PutMapping("/products/{id}")
-//    public ResponseEntity<HttpStatus> PutProduct(@PathVariable Long id, @Valid @RequestBody Product product){
-//        this.productService.PutProductInDatabase(id,product);
-//        return ResponseEntity.ok(HttpStatus.OK);
-//    }
 
     @SneakyThrows
-    @PatchMapping ("/products/{id}")
-    public ResponseEntity<?> PatchProduct(@PathVariable Long id, @RequestParam(name = "productCategory") String productCategory,
-                                          @RequestParam(name = "productSubCategory",required = false) String productSubCategory,
-                                          @RequestParam(name = "productName") String productName,
-                                          @RequestParam(name = "manufacturer",required = false)  String manufacturer,
-                                          @RequestParam(name = "serialNumber",required = false) String serialNumber,
-                                          @RequestParam(name = "model",required = false) String model,
-                                          @RequestParam(name = "productPrice") String productPrice,
-                                          @RequestParam(name = "numberOfItems") Integer numberOfItems,
-                                          @RequestParam(name = "location") String location,
-                                          @RequestParam(name = "cod") String cod,
-                                          @RequestParam(name = "status") String status,
-                                          @RequestParam(name = "description") String description,
-                                          @RequestParam(name = "placeWarehouse") String placeWarehouse,
-                                          @RequestParam(value = "fileupload") MultipartFile file ){
+    @PatchMapping("/{id}")
+    public ResponseEntity<HttpStatus> PatchProduct( @PathVariable Long id,@RequestParam(name = "product") String json,
+                                                    @RequestParam(name = "fileupload") MultipartFile file) throws JsonProcessingException {
 
-        Product product = new Product();
-        product.setId(id);
-        product.setProductCategory(productCategory);
-        product.setProductSubCategory(productSubCategory);
-        product.setProductName(productName);
-        product.setManufacturer(manufacturer);
-        product.setModel(model);
-        product.setProductPrice(productPrice);
-        product.setNumberOfItems(numberOfItems);
-        product.setLocation(location);
-        product.setCod(cod);
-        product.setStatus(status);
-        product.setDescription(description);
-        product.setWareHouseplace(description);
-
-
-       return  ResponseEntity.ok( this.productService.PatchProductInDatabase(id,product,file));
+        Product product = objectMapper.readValue(json,Product.class);
+        return  ResponseEntity.ok( this.productService.PatchProductInDatabase(id,product,file));
     }
+
 
 
     @PostMapping("/export")
-    public ResponseEntity<?> ExportData(@RequestParam(name = "route" ) String routeExport,@RequestBody List<Product> products){
+    public ResponseEntity<HttpStatus> ExportData(@RequestParam(name = "route" ) String routeExport,@RequestBody List<Product> products){
         return ResponseEntity.ok(productService.ExportData(routeExport,products));
     }
     @GetMapping("/parcel")
-    public ResponseEntity<?> GetParcelData(){
+    public ResponseEntity<Product> GetParcelData(){
         return ResponseEntity.ok(productService.GetParcelData());
     }
-
-
-    @GetMapping("/search")
-    public ResponseEntity<?> GetSearchingProducts(@RequestParam(value = "searchText") String searchText){
-        return ResponseEntity.ok(productService.GetAllBySearch(searchText));
-    }
-
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        System.out.println(errors);
-        return errors;
-    }
-
-
-
-
 
 }
 

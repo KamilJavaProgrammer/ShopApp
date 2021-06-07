@@ -1,8 +1,6 @@
 package ShopAppBackend.ExceptionHandlers;
 
-import ShopAppBackend.Exceptions.DataNotFoundException;
-import ShopAppBackend.Exceptions.EmailNotFoundException;
-import ShopAppBackend.Exceptions.UserNotFoundException;
+import ShopAppBackend.Exceptions.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +20,7 @@ public class ApiExceptionHandler  extends ResponseEntityExceptionHandler {
     }
 
 
-    @ExceptionHandler({DataNotFoundException.class})
+    @ExceptionHandler({DataNotFoundException.class, ArticleLineNotFoundException.class, SectionNotFoundException.class})
     public ResponseEntity<Object> handleWebExceptionMongo(RuntimeException e, WebRequest webRequest) {
 
         return handleExceptionInternal(e,e.getMessage(),HttpHeaders.EMPTY,HttpStatus.NOT_FOUND,webRequest);

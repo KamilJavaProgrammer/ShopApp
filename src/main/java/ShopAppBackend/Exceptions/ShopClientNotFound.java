@@ -1,8 +1,10 @@
 package ShopAppBackend.Exceptions;
 
-public class ShopClientNotFound extends Throwable {
+public class ShopClientNotFound extends RuntimeException {
 
-    public ShopClientNotFound(String error){
-        System.out.println(error);
+
+    private static final String EXCEPTION_MESSAGE = "Shop Client not found";
+    public ShopClientNotFound(){
+        super(EXCEPTION_MESSAGE);
     }
 }

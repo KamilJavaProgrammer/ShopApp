@@ -178,17 +178,12 @@ public class CompleteOrderService {
    }
 
 
-
-
-
-
-   public ResponseEntity<List<CompleteOrder>> GetAllOrdersByUser(String username){
+   public List<CompleteOrder> GetAllOrdersByUser(String username){
 
         if(username!=null)
         {
             Long clientId = userRepo.getClientIdByUserUsername(username);
-            List<CompleteOrder> orders = completeOrderRepository.getAllOrder(clientId);
-            return ResponseEntity.status(HttpStatus.OK).body(orders);
+            return completeOrderRepository.getAllOrder(clientId);
         }
         else
         {

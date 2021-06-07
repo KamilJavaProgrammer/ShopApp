@@ -27,14 +27,10 @@ public class CompleteOrderController {
     }
 
     @GetMapping("/orders")
-    public ResponseEntity<?> GetAllOrdersForUser(@AuthenticationPrincipal UsernamePasswordAuthenticationToken user) {
+    public ResponseEntity<List<CompleteOrder>> GetAllOrdersForUser(@AuthenticationPrincipal UsernamePasswordAuthenticationToken user) {
         return ResponseEntity.ok(completeOrderService.GetAllOrdersByUser(user.getName()));
     }
 
-//    @GetMapping("/order/{id}")
-//    public ResponseEntity<List<CompleteOrder>> GetAllOrdersByUserId(@PathVariable Long id){
-//        return ResponseEntity.ok(completeOrderService.GetAllOrdersByUserId(id));
-//    }
 
     @PostMapping("/orders")
     public ResponseEntity<HttpStatus> TakeOrder(@RequestBody CompleteOrder completeOrder) throws IOException, SQLException {

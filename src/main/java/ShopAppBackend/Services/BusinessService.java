@@ -3,12 +3,10 @@ package ShopAppBackend.Services;
 
 import ShopAppBackend.Entities.Business;
 import ShopAppBackend.Repositories.BusinessRepo;
-import ShopAppBackend.Services.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -24,13 +22,11 @@ public class BusinessService {
     }
 
 
-    public ResponseEntity<List<Business>> GetAllBusinessFromDatabase(){
+    public List<Business> GetAllBusinessFromDatabase(){
 
-        List<Business> businesses = businessRepo.findAll();
-        return ResponseEntity.status(HttpStatus.OK).body(businesses);
+        List<Business> businessesList = businessRepo.findAll();
+        return (businessesList.isEmpty()) ? Collections.emptyList(): businessesList;
     }
-
-
 
     public Business CreateNewBusiness(){
 
@@ -39,9 +35,6 @@ public class BusinessService {
         businessRepo.save(business);
         return business;
     }
-
-
-
 
 
     public Business SaveBusinnesToDatabase(Business business){

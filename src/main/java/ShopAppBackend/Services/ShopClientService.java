@@ -1,7 +1,9 @@
 package ShopAppBackend.Services;
 
 
+import ShopAppBackend.Entities.Section;
 import ShopAppBackend.Entities.ShopClient;
+import ShopAppBackend.Exceptions.SectionNotFoundException;
 import ShopAppBackend.Exceptions.ShopClientNotFound;
 import ShopAppBackend.Repositories.ShopClientRepository;
 import ShopAppBackend.AbstractSuperclass.Client;
@@ -38,6 +40,7 @@ public class ShopClientService {
         this.businessService = businessService;
     }
 
+    @Transactional
     public ShopClient CreateNewShopClient(User user){
 
         ShopClient shopClient = new ShopClient();
@@ -50,42 +53,29 @@ public class ShopClientService {
     }
 
 
-//
-//    public ResponseEntity<List<ShopClient>> GetAllClient(){
-//        List<ShopClient> clients = shopClientRepository.findAll();
-//        System.out.println(clients);
-//        clients.sort(ShopClient::compareTo);
-//        System.out.println(clients);
-//        return ResponseEntity.status(HttpStatus.OK).body(clients);
-//    }
-
-    public ResponseEntity<List<ShopClient>> GetAllClient(){
+    public List<ShopClient> GetAllClient(){
         List<ShopClient> clients = shopClientRepository.findAll();
         clients.sort(ShopClient::compareTo);
-        return ResponseEntity.status(HttpStatus.OK).body(clients);
+        return clients;
     }
 
 
 
     @Transactional
-    public ResponseEntity<HttpStatus> DeleteShopClientById(Long id){
-        if(id == null){
-            throw new IllegalArgumentException();
-        }
-        else
-        {
-            shopClientRepository.deleteById(id);
-            return ResponseEntity.ok(HttpStatus.NO_CONTENT);
-        }
+    public HttpStatus DeleteShopClientById(Long id){
+        Optional<ShopClient> section = shopClientRepository.findById(id);
+        shopClientRepository.delete(section.orElseThrow(ShopClientNotFound::new));
+        return HttpStatus.NO_CONTENT;
 
     }
 
-    public ResponseEntity<HttpStatus> AddClientToDatabase(ShopClient shopClient){
+    @Transactional
+    public HttpStatus AddClientToDatabase(ShopClient shopClient){
 
         if(shopClient != null){
             addressRepo.save(shopClient.getAddress());
             shopClientRepository.save(shopClient);
-            return ResponseEntity.ok(HttpStatus.NO_CONTENT);
+            return HttpStatus.NO_CONTENT;
         }
         else
         {
@@ -96,18 +86,18 @@ public class ShopClientService {
 
 
     @Transactional
-    public ResponseEntity<HttpStatus> DeleteClients(List<ShopClient> shopClients){
+    public HttpStatus DeleteClients(List<ShopClient> shopClients){
         shopClients.forEach(shopClient -> {
             shopClientRepository.deleteById(shopClient.getId());
         });
 
-        return ResponseEntity.ok(HttpStatus.NO_CONTENT);
+        return HttpStatus.NO_CONTENT;
     }
 
 
 
     @Transactional
-    public  ResponseEntity<ShopClient> UpdateClientData(ShopClient shopClient,String username) {
+    public  ShopClient UpdateClientData(ShopClient shopClient,String username) {
 
         ShopClient shopClientInstant = shopClientRepository.getOne(userRepo.getClientIdByUserUsername(username));
 
@@ -118,58 +108,10 @@ public class ShopClientService {
         shopClientInstant.setAddress(addressService.SaveAddressToDatabase(shopClient.getAddress()));
         shopClientInstant.setBusiness(businessService.SaveBusinnesToDatabase(shopClient.getBusiness()));
         shopClientRepository.save(shopClientInstant);
-
-        return  ResponseEntity.status(HttpStatus.OK).body(shopClient);
+       return shopClient;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    @Transactional
-//    public ResponseEntity<String> AddClientAddress(Client client, String login) {
-//
-//        try {
-//            Client clientInstant = clientRepository.getOne(userRepo.getClientByUsername1(login));
-//
-//            if (client.getAddress() != null) {
-//                addressRepo.save(client.getAddress());
-//                clientInstant.setAddress(client.getAddress());
-//            } else {
-//                addressRepo.save(client.getBusiness().getAddress());
-//                clientInstant.getBusiness().setAddress(client.getBusiness().getAddress());
-//            }
-//            clientRepository.save(clientInstant);
-//
-//            return ResponseEntity.status(HttpStatus.CREATED).body("OK");
-//
-//        } catch (Exception e) {
-//
-//            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Error" + e.toString());
-//        }
-//    }
-
-
-
-
-
-
-    public Client GetClientByLogin(String login) {
-
-        return shopClientRepository.getOne(userRepo.getClientByUsername1(login));
-
-    }
-
-    public Optional<ShopClient> GetOneShopClientFromDatabase(Long id) throws ShopClientNotFound {
+    public ShopClient GetOneShopClientFromDatabase(Long id) throws ShopClientNotFound {
 
         if(id == null){
             throw new IllegalArgumentException();
@@ -178,20 +120,20 @@ public class ShopClientService {
         {
             Optional<ShopClient> shopClient = shopClientRepository.findById(id);
             if(shopClient.isPresent()){
-                return shopClient;
+                return shopClient.get();
             }
             else
             {
-                throw new ShopClientNotFound("error");
+                throw new ShopClientNotFound();
             }
         }
     }
 
 
-    public ResponseEntity<ShopClient> GetOneClientByTokenJwt(String username) {
+    public ShopClient GetOneClientByTokenJwt(String username) {
         ShopClient shopClientInstant = shopClientRepository.getOne(userRepo.getClientIdByUserUsername(username));
 
-        return ResponseEntity.status(HttpStatus.OK).body(shopClientInstant);
+        return shopClientInstant;
 
     }
 }
