@@ -46,6 +46,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 antMatchers("/users/login/admin").permitAll().
                 antMatchers("/users/all").authenticated().
                 antMatchers("/users/auth").authenticated().
+                antMatchers("/socket").authenticated().
+                antMatchers("/topic").authenticated().
                 antMatchers(HttpMethod.POST,"/users/password").permitAll().
                 antMatchers(HttpMethod.PATCH,"/users/password").authenticated().
                 antMatchers(HttpMethod.GET,"image/{name}").permitAll().

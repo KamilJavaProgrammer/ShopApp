@@ -14,8 +14,8 @@ import java.util.Map;
 @Service
 public class CategoryService {
 
-    private CategoryRepository categoryRepository;
-    private ProductRepo productRepo;
+    private final CategoryRepository categoryRepository;
+    private final ProductRepo productRepo;
 
 
     @Autowired

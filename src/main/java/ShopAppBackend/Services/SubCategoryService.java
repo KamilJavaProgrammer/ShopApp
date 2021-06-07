@@ -12,9 +12,9 @@ import java.util.*;
 
 @Service
 public class SubCategoryService {
-    private SubCategoryRepository subCategoryRepository;
-    private ProductRepo productRepo;
-    private CategoryRepository categoryRepository;
+    private final SubCategoryRepository subCategoryRepository;
+    private final ProductRepo productRepo;
+    private final CategoryRepository categoryRepository;
 
 
     @Autowired

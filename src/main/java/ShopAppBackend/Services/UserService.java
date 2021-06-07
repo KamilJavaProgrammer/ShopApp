@@ -6,7 +6,6 @@ import ShopAppBackend.Exceptions.EmailNotFoundException;
 import ShopAppBackend.Exceptions.UserNotFoundException;
 import ShopAppBackend.Logs.LogsApplication;
 import ShopAppBackend.Repositories.UserRepo;
-import ShopAppBackend.Repositories.ShopClientRepository;
 import ShopAppBackend.Interfaces.Mailing;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -33,41 +32,34 @@ import java.util.*;
 @Service
 public class UserService  {
 
-
     private final LogsApplication logsApplication;
-    public final long expirationTime;
-    public final  String secret;
+    private final long expirationTime;
+    private final String passwordJWT;
     private final UserRepo userRepo;
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final JavaMailSender javaMailSender;
     private final PasswordEncoder passwordEncoder;
-    public static String name = "";
-    public  String codeVerification;
-    public ShopClientRepository shopClientRepository;
-    public ShopClientService shopClientService;
-    public ModelMapper modelMapper;
-    private ObjectMapper objectMapper;
-
+    private final ShopClientService shopClientService;
+    private final ModelMapper modelMapper;
+    private final ObjectMapper objectMapper;
 
 
     @Autowired
-    public UserService(@Value("${jwt.secret}")String secret, @Value("${jwt.token.expirationTime}") long expirationTime,
+    public UserService(@Value("${jwt.secret}")String passwordJWT, @Value("${jwt.token.expirationTime}") long expirationTime,
                        UserRepo userRepo, JavaMailSender javaMailSender, PasswordEncoder passwordEncoder,
-                       ShopClientRepository shopClientRepository, ModelMapper modelMapper, ObjectMapper objectMapper,
+                       ModelMapper modelMapper, ObjectMapper objectMapper,
                        ShopClientService shopClientService,
                        LogsApplication logsApplication) {
 
         this.expirationTime = expirationTime;
-        this.secret = secret;
+        this.passwordJWT = passwordJWT;
         this.userRepo = userRepo;
         this.javaMailSender = javaMailSender;
         this.passwordEncoder = passwordEncoder;
-        this.shopClientRepository = shopClientRepository;
         this.modelMapper = modelMapper;
         this.objectMapper = objectMapper;
         this.shopClientService = shopClientService;
         this.logsApplication = logsApplication;
-
     }
 
 
@@ -88,12 +80,12 @@ public class UserService  {
                     user.setRole("ADMIN");
                     user.setShopClient(shopClientService.CreateNewShopClient(user));
 
-                    this.codeVerification = this.GenerateRandomKey();
+                    String codeVerification = this.GenerateRandomKey();
                     user.setCodeVerification(codeVerification);
                     String encodedPassword = passwordEncoder.encode(user.getPassword());
                     user.setPassword(encodedPassword);
                     userRepo.save(user);
-//                    FilterJwt.SaveToFile("Add User of email" + " " + user.getEmail());
+                    logsApplication.SaveLogToDatabase("Add User of email" + " " + user.getEmail());
                     mailing.Mail();
                          response.setMessage("OK");
                          response.setStatus(201);
@@ -101,7 +93,7 @@ public class UserService  {
                 }
                 else {
                     logger.warn("Login exists");
-//                    FilterJwt.SaveToFile("Login Exists");
+                    logsApplication.SaveLogToDatabase("Login Exists");
                     response.setMessage("Login Exists");
                     response.setStatus(200);
                     return response;
@@ -109,7 +101,7 @@ public class UserService  {
             }
             else {
                 logger.info("Email exists.");
-//                FilterJwt.SaveToFile("Email exists");
+                logsApplication.SaveLogToDatabase("Email Exists");
                 response.setMessage("Email exists");
                 response.setStatus(200);
                 return response;
@@ -140,7 +132,7 @@ public class UserService  {
             userRepo.save(userInstant);
 
             logger.info("Successful verification");
-//            FilterJwt.SaveToFile("Successful verification by user" + userInstant.getUsername());
+            logsApplication.SaveLogToDatabase("Successful verification by user" + userInstant.getUsername());
             response.setMessage("OK");
             response.setStatus(201);
 
@@ -148,7 +140,7 @@ public class UserService  {
         else
         {
             logger.warn("Inauspicious verification");
-//            FilterJwt.SaveToFile("No Successful verification by user" + userInstant.getUsername());
+            logsApplication.SaveLogToDatabase("No Successful verification by user" + userInstant.getUsername());
             response.setMessage("Inauspicious verification");
             response.setStatus(401);
         }
@@ -169,11 +161,12 @@ public class UserService  {
                         .withSubject(userInstant.getUsername())
                         .withClaim("role",userInstant.getRole())
                         .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))
-                        .sign(Algorithm.HMAC256(secret));
+                        .sign(Algorithm.HMAC256(passwordJWT));
 
 
                 logger.info("Sucessfull Generate JWT");
-                logsApplication.SaveToFile("Sucessfull Generate JWT from user" + userInstant.getUsername());
+
+                logsApplication.SaveLogToDatabase("Sucessfull Generate JWT from user" + userInstant.getUsername());
                 response.setStatus(200);
                 response.setMessage(token);
 
@@ -182,7 +175,7 @@ public class UserService  {
             {
 
                 logger.warn("Account is deactive");
-                logsApplication.SaveToFile("Account is deactive");
+                logsApplication.SaveLogToDatabase("Account is deactive");
                 response.setStatus(403);
                 response.setMessage("Account is deactive");
             }
@@ -191,7 +184,7 @@ public class UserService  {
         else
         {
             logger.warn("Wrong login or password");
-            logsApplication.SaveToFile("Wrong login or password");
+            logsApplication.SaveLogToDatabase("Wrong login or password");
             response.setStatus(401);
             response.setMessage("Wrong login or password");
         }
@@ -211,7 +204,7 @@ public class UserService  {
 
             {
                 logger.info("User don't be ADMIN");
-//                FilterJwt.SaveToFile("User don't be ADMIN" + user1.getUsername());
+                logsApplication.SaveLogToDatabase("User don't be ADMIN" + user1.getUsername());
                 Response response = new Response();
                 response.setMessage("Not authorized");
                 response.setStatus(401);
@@ -221,7 +214,7 @@ public class UserService  {
         else
         {
             logger.warn("User dont exists");
-//            FilterJwt.SaveToFile("Failed Attempt Login User" + user.getUsername() + "." + "User dont exists");
+            logsApplication.SaveLogToDatabase("Failed Attempt Login User" + user.getUsername() + "." + "User dont exists");
             throw new UserNotFoundException();
         }
     }
@@ -240,7 +233,7 @@ public class UserService  {
         else
         {
             logger.warn("User not found");
-            this.logsApplication.SaveToFile("User not found");
+            logsApplication.SaveLogToDatabase("User not found");
             throw new UserNotFoundException();
 
         }
@@ -273,21 +266,15 @@ public class UserService  {
     }
 
 
-    public User GetUserByName(String username) throws UserNotFoundException, IOException {
-        System.out.println("jestem w metodzie");
-        System.out.println("jestem w metodzie");
+    public UserDto GetUserByName(String username) throws UserNotFoundException {
 
         User user = userRepo.findByUsername(username);
         if(user != null){
 
-
-//           UserDto userDto  = modelMapper.map(user,UserDto.class);
-
-            return user;
+            return modelMapper.map(user,UserDto.class);
         }
         else
         {
-            System.out.println("jestem w else");
             throw new UserNotFoundException();
         }
 
@@ -303,13 +290,13 @@ public class UserService  {
             SendEmail(email, "Kod do zmiany hasła", user.getCodeVerification(), false);
 
             logger.info("SendCodeToEmail");
-//            FilterJwt.SaveToFile("SendCodeToEmail");
+            logsApplication.SaveLogToDatabase("SendCodeToEmail");
             return HttpStatus.OK;
         }
         else
         {
             logger.error("Email Dont Exists");
-//            FilterJwt.SaveToFile("Email dont exists");
+            logsApplication.SaveLogToDatabase("Email dont exists");
             throw new EmailNotFoundException();
 
         }
@@ -319,13 +306,12 @@ public class UserService  {
 
         if(userRepo.existsUserByEmail(user.getEmail())){
 
-
             User userInstant = userRepo.findByEmail(user.getEmail());
 
             if(user.getCodeVerification().equals(userInstant.getCodeVerification())) {
                 userInstant.setPassword(passwordEncoder.encode(user.getPassword()));
                 userRepo.save(userInstant);
-//                FilterJwt.SaveToFile(userInstant + "changed password");
+                logsApplication.SaveLogToDatabase(userInstant + "changed password");
                 return HttpStatus.OK;
 
             }
@@ -341,7 +327,7 @@ public class UserService  {
         else
         {
             logger.error("Email Dont Exists");
-//            FilterJwt.SaveToFile("Email dont exists");
+            logsApplication.SaveLogToDatabase("Email dont exists");
             throw new EmailNotFoundException();
         }
     }

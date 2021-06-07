@@ -1,9 +1,13 @@
 package ShopAppBackend.Logs;
 
 
+import ShopAppBackend.Entities.Log;
+import ShopAppBackend.Repositories.LogsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedWriter;
@@ -17,33 +21,26 @@ import java.time.LocalDateTime;
 @Slf4j
 public class LogsApplication {
 
+    private final LogsRepository logsRepository;
 
-    private static Logger logger = LoggerFactory.getLogger(LogsApplication.class);
+    @Autowired
+    public LogsApplication(LogsRepository logsRepository) {
+        this.logsRepository = logsRepository;
+    }
 
+    private final Logger logger = LoggerFactory.getLogger(LogsApplication.class);
 
-    public  void SaveToFile(String save) throws IOException {
-        try{
-            Files.createFile(Paths.get("C:/ZdjęciaBaza/logi.txt"));
-        } catch (IOException e){
-            logger.info("ERROR");
-        } finally {
+    public  void SaveLogToDatabase(String message){
+
 
             LocalDateTime localDateTime = LocalDateTime.now();
             String date = localDateTime.toString();
-            String date1 = date.replace("T"," ");
+            String dateFormat = date.replace("T"," ");
 
-            StringBuilder sb = new StringBuilder(date1);
-            String date2 =  sb.delete(19,29).toString();
-
-
-            FileWriter fw = new FileWriter("C:/ZdjęciaBaza/logi.txt",true);
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.append(date2);
-            bw.append("  "+save);
-            bw.newLine();
-            bw.close();
+            StringBuilder sb = new StringBuilder(dateFormat);
+            String finalDataFormat =  sb.delete(19,29).toString();
+            logsRepository.save(new Log(finalDataFormat,message));
 
         }
     }
 
-}

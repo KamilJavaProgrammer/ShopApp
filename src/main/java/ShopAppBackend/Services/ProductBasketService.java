@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProductBasketService {
 
-    private ProductBasketRepo productBasketRepo;
+    private final ProductBasketRepo productBasketRepo;
 
     @Autowired
     public ProductBasketService(ProductBasketRepo productBasketRepo) {

@@ -14,8 +14,8 @@ import java.util.List;
 @Service
 public class BusinessService {
 
-    private BusinessRepo businessRepo;
-    private AddressService addressService;
+    private final BusinessRepo businessRepo;
+    private final AddressService addressService;
 
     @Autowired
     public BusinessService(BusinessRepo businessRepo, AddressService addressService) {

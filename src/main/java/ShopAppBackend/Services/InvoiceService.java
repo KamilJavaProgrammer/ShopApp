@@ -35,10 +35,10 @@ import java.util.List;
 public class InvoiceService {
 
     private final InvoiceRepo invoiceRepo;
-    private BusinessRepo businessRepo;
-    private JavaMailSender javaMailSender;
+    private final BusinessRepo businessRepo;
+    private final JavaMailSender javaMailSender;
     private final ProductRepo productRepo;
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
     private final CompleteOrderRepository completeOrderRepository;
     private final UserService userService;
 

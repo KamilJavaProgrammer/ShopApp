@@ -22,22 +22,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.*;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import ShopAppBackend.Entities.Category;
 import ShopAppBackend.Repositories.CategoryRepository;
 import ShopAppBackend.Entities.SubCategory;
 import ShopAppBackend.Repositories.SubCategoryRepository;
 
-import javax.mail.Multipart;
 import javax.transaction.Transactional;
 import java.io.*;
 import java.net.MalformedURLException;
-import java.net.URLConnection;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -48,27 +42,24 @@ import java.util.regex.Pattern;
 @Service
 @Slf4j
 public class ProductService extends Thread {
-    private Logger logger = LoggerFactory.getLogger(ProductService.class);
 
-    private ProductRepo productRepo;
-    private CategoryRepository categoryRepository;
+    private final Logger logger = LoggerFactory.getLogger(ProductService.class);
+    private final ProductRepo productRepo;
+    private final CategoryRepository categoryRepository;
     private final Path rootLocation = Paths.get("C://ZdjęciaBaza/");
-    private List<ProductDTO> productDTOs;
-    public ModelMapper modelMapper;
-    private SubCategoryRepository subCategoryRepository;
-    private JavaMailSender javaMailSender;
-    private RestTemplate restTemplate;
+    private final SubCategoryRepository subCategoryRepository;
     public final String apiKey;
+    public ModelMapper modelMapper;
+
 
 
     @Autowired
-    public ProductService(@Value("${removebg.apikey}") String apiKey, RestTemplate restTemplate, ProductRepo productRepo, ModelMapper modelMapper, SubCategoryRepository subCategoryRepository, JavaMailSender javaMailSender, CategoryRepository categoryRepository) {
+    public ProductService(@Value("${removebg.apikey}") String apiKey,ProductRepo productRepo, ModelMapper modelMapper,
+                          SubCategoryRepository subCategoryRepository, CategoryRepository categoryRepository) {
         this.productRepo = productRepo;
         this.modelMapper = modelMapper;
         this.subCategoryRepository = subCategoryRepository;
-        this.javaMailSender = javaMailSender;
         this.categoryRepository = categoryRepository;
-        this.restTemplate = restTemplate;
         this.apiKey = apiKey;
     }
 

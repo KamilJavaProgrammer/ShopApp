@@ -50,12 +50,12 @@ public class UserController  {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> Login(@Valid @RequestBody User user) throws IOException, UserNotFoundException {
+    public ResponseEntity<Response> Login(@Valid @RequestBody User user) throws IOException, UserNotFoundException {
         return ResponseEntity.ok(userService.LoginAndGenJsonWebToken(user));
     }
 
     @PostMapping("/login/admin")
-    public ResponseEntity<?> LoginAdmin(@Valid @RequestBody User user) throws IOException, UserNotFoundException {
+    public ResponseEntity<Response> LoginAdmin(@Valid @RequestBody User user) throws IOException, UserNotFoundException {
         return ResponseEntity.ok(userService.LoginAdminAndGenJsonWebToken(user));
     }
 
@@ -67,8 +67,8 @@ public class UserController  {
   }
 
    @GetMapping("/auth")
-    public User GetUser(@AuthenticationPrincipal UsernamePasswordAuthenticationToken user) throws UserNotFoundException, IOException {
-        return userService.GetUserByName(user.getName());
+    public ResponseEntity<UserDto> GetUser(@AuthenticationPrincipal UsernamePasswordAuthenticationToken user) throws UserNotFoundException, IOException {
+        return ResponseEntity.ok(userService.GetUserByName(user.getName()));
     }
 
     @GetMapping("/all")
