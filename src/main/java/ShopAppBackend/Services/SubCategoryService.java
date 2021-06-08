@@ -25,8 +25,6 @@ public class SubCategoryService {
     }
 
 
-
-
     public Map<String, Long> GetCategories(String path) {
 
         if(path != null) {
@@ -43,7 +41,7 @@ public class SubCategoryService {
             }
 
             else {
-                return Collections.EMPTY_MAP;
+                return Collections.emptyMap();
             }
 
         }
@@ -73,7 +71,7 @@ public class SubCategoryService {
             }
 
             else {
-                return Collections.EMPTY_MAP;
+                return Collections.emptyMap();
             }
 
         }
@@ -86,13 +84,8 @@ public class SubCategoryService {
     public List<String> GetAllSubCategories(){
 
         List<String> allSubCategories = subCategoryRepository.GetAllSubCategories();
-        if(!allSubCategories.isEmpty()){
-            Collections.sort(allSubCategories);
-            return allSubCategories;
-        }
-        else
-        {
-            return Collections.EMPTY_LIST;
-        }
+        Collections.sort(allSubCategories);
+        return (allSubCategories.isEmpty())? Collections.emptyList(): allSubCategories;
+
     }
 }

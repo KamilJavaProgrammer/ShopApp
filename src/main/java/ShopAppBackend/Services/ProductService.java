@@ -124,7 +124,7 @@ public class ProductService extends Thread {
 
         }
 
-
+                product.setDate(LocalDate.now().toString());
                 productRepo.save(product);
             }
 

@@ -4,11 +4,13 @@ package ShopAppBackend.Controllers;
 import ShopAppBackend.Entities.Section;
 import ShopAppBackend.Services.SectionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -26,18 +28,18 @@ public class SectionController {
     }
 
     @GetMapping("")
-    public ResponseEntity<?> GetAllSections(){
+    public ResponseEntity<List<Section>> GetAllSections(){
         return ResponseEntity.ok(sectionService.GetAllSectionsFromDatabase());
     }
 
     @PostMapping("")
-    public ResponseEntity<?> AddOneSection(@RequestBody Section section){
+    public ResponseEntity<HttpStatus> AddOneSection(@RequestBody Section section){
 
         return ResponseEntity.ok(sectionService.AddOneSectionToDatabase(section));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> DeleteSectionById(@PathVariable @NotNull Integer id){
+    public ResponseEntity<HttpStatus> DeleteSectionById(@PathVariable @NotNull Integer id){
 
         return ResponseEntity.ok(sectionService.DeleteOneSectionById(id));
     }

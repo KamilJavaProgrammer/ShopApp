@@ -41,7 +41,7 @@ public class SectionService {
     }
 
     @Transactional
-    public ResponseEntity<HttpStatus> AddOneSectionToDatabase(Section section) {
+    public HttpStatus AddOneSectionToDatabase(Section section) {
 
         if (section != null) {
 
@@ -72,7 +72,7 @@ public class SectionService {
             sectionInstant.setName(section.getName());
             sectionInstant.setSectionCategoriesList(sectionCategories);
             sectionRepository.save(sectionInstant);
-            return ResponseEntity.ok(HttpStatus.NO_CONTENT);
+            return HttpStatus.NO_CONTENT;
 
         }
         else {

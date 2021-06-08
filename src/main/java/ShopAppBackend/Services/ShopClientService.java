@@ -1,17 +1,13 @@
 package ShopAppBackend.Services;
 
 
-import ShopAppBackend.Entities.Section;
 import ShopAppBackend.Entities.ShopClient;
-import ShopAppBackend.Exceptions.SectionNotFoundException;
 import ShopAppBackend.Exceptions.ShopClientNotFound;
 import ShopAppBackend.Repositories.ShopClientRepository;
-import ShopAppBackend.AbstractSuperclass.Client;
 import ShopAppBackend.Entities.User;
 import ShopAppBackend.Repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ShopAppBackend.Repositories.AddressRepo;
 
@@ -113,27 +109,13 @@ public class ShopClientService {
 
     public ShopClient GetOneShopClientFromDatabase(Long id) throws ShopClientNotFound {
 
-        if(id == null){
-            throw new IllegalArgumentException();
-        }
-        else
-        {
             Optional<ShopClient> shopClient = shopClientRepository.findById(id);
-            if(shopClient.isPresent()){
-                return shopClient.get();
-            }
-            else
-            {
-                throw new ShopClientNotFound();
-            }
-        }
+            return shopClient.orElseThrow(ShopClientNotFound::new);
+
     }
 
 
     public ShopClient GetOneClientByTokenJwt(String username) {
-        ShopClient shopClientInstant = shopClientRepository.getOne(userRepo.getClientIdByUserUsername(username));
-
-        return shopClientInstant;
-
+        return shopClientRepository.getOne(userRepo.getClientIdByUserUsername(username));
     }
 }

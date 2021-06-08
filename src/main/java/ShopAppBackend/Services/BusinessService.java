@@ -6,6 +6,7 @@ import ShopAppBackend.Repositories.BusinessRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class BusinessService {
     }
 
 
+    @Transactional
     public Business SaveBusinnesToDatabase(Business business){
 
         if(business != null) {
