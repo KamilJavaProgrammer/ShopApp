@@ -4,6 +4,7 @@ package ShopAppBackend.Services;
 import ShopAppBackend.Entities.ArticleLine;
 import ShopAppBackend.Entities.Product;
 import ShopAppBackend.Exceptions.ArticleLineNotFoundException;
+import ShopAppBackend.Logs.LogsApplication;
 import ShopAppBackend.Repositories.ArticleLineRepository;
 import ShopAppBackend.Repositories.ProductRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,14 @@ public class ArticleLineService {
 
     private final ArticleLineRepository articleLineRepository;
     private final ProductRepo productRepo;
+    private final LogsApplication logsApplication;
+
 
     @Autowired
-    public ArticleLineService(ArticleLineRepository articleLineRepository,ProductRepo productRepo) {
+    public ArticleLineService(ArticleLineRepository articleLineRepository,ProductRepo productRepo,LogsApplication logsApplication) {
         this.articleLineRepository = articleLineRepository;
         this.productRepo = productRepo;
+        this.logsApplication = logsApplication;
     }
 
 
@@ -39,6 +43,7 @@ public class ArticleLineService {
            products.add(productRepo.getOne(product.getId()));
         });
         articleLineInstant.setProductList(products);
+        logsApplication.SaveLogToDatabase("Create new ArticleLine");
         articleLineRepository.save(articleLine);
 
 
@@ -57,6 +62,7 @@ public class ArticleLineService {
 
         Optional<ArticleLine> articleLine = articleLineRepository.findById(id);
         articleLineRepository.delete(articleLine.orElseThrow(ArticleLineNotFoundException::new));
+        logsApplication.SaveLogToDatabase("Delete ArticleLine by id =" + id);
         return ResponseEntity.ok(HttpStatus.NO_CONTENT);
     }
 }

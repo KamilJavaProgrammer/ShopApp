@@ -1,6 +1,7 @@
 package ShopAppBackend.Services;
 
 import ShopAppBackend.Entities.NewsLetter;
+import ShopAppBackend.Logs.LogsApplication;
 import ShopAppBackend.Repositories.NewsletterRepository;
 import ShopAppBackend.Entities.Product;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,26 +28,29 @@ public class NewsLetterService  {
     private final JavaMailSender javaMailSender;
     private static final String SUBJECT = "Nowy produkt";
     private static final String DESCRIPTION = "Uwaga dodaliśmy nowy produkt";
+    private final LogsApplication logsApplication;
 
     @Autowired
-    public NewsLetterService(NewsletterRepository newsletterRepository, JavaMailSender javaMailSender) {
+    public NewsLetterService(NewsletterRepository newsletterRepository, JavaMailSender javaMailSender,LogsApplication logsApplication) {
         this.newsletterRepository = newsletterRepository;
         this.javaMailSender = javaMailSender;
+        this.logsApplication = logsApplication;
     }
 
     @Transactional
     public HttpStatus AttachObserver(String email){
          newsletterRepository.save(new NewsLetter(email));
+         this.logsApplication.SaveLogToDatabase("Attach new Observer to Newsletter" + email);
          return HttpStatus.CREATED;
     }
 
     @Transactional
     public HttpStatus RemoveObserver(Integer id){
         Optional<NewsLetter> newsLetter = newsletterRepository.findById(id);
-
         if(newsLetter.isPresent())
         {
             newsletterRepository.deleteById(id);
+            this.logsApplication.SaveLogToDatabase("Delete  Observer id = ");
             return HttpStatus.NO_CONTENT;
         }
         else
@@ -82,6 +86,8 @@ public class NewsLetterService  {
                 e.printStackTrace();
             }
         });
+        this.logsApplication.SaveLogToDatabase("Send Emails to Subscribers");
+
     }
 
 

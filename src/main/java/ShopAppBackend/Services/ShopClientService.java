@@ -3,6 +3,7 @@ package ShopAppBackend.Services;
 
 import ShopAppBackend.Entities.ShopClient;
 import ShopAppBackend.Exceptions.ShopClientNotFound;
+import ShopAppBackend.Logs.LogsApplication;
 import ShopAppBackend.Repositories.ShopClientRepository;
 import ShopAppBackend.Entities.User;
 import ShopAppBackend.Repositories.UserRepo;
@@ -25,15 +26,18 @@ public class ShopClientService {
     private final AddressRepo addressRepo;
     private final AddressService addressService;
     private final BusinessService businessService;
+    private final LogsApplication logsApplication;
 
 
     @Autowired
-    public ShopClientService(ShopClientRepository shopClientRepository, UserRepo userRepo, AddressRepo addressRepo, AddressService addressService, BusinessService businessService, AddressService addressService1) {
+    public ShopClientService(LogsApplication logsApplication,ShopClientRepository shopClientRepository, UserRepo userRepo, AddressRepo addressRepo, AddressService addressService, BusinessService businessService, AddressService addressService1) {
         this.shopClientRepository = shopClientRepository;
         this.userRepo = userRepo;
         this.addressRepo = addressRepo;
         this.addressService = addressService;
         this.businessService = businessService;
+        this.logsApplication = logsApplication;
+
     }
 
     @Transactional
@@ -45,6 +49,7 @@ public class ShopClientService {
         shopClient.setAddress(addressService.CreateNewAddress("Wysyłkowy"));
         shopClient.setBusiness(businessService.CreateNewBusiness());
         shopClientRepository.save(shopClient);
+        this.logsApplication.SaveLogToDatabase("Create new ShopClient + " + user.getUsername());
         return shopClient;
     }
 
@@ -71,6 +76,8 @@ public class ShopClientService {
         if(shopClient != null){
             addressRepo.save(shopClient.getAddress());
             shopClientRepository.save(shopClient);
+            this.logsApplication.SaveLogToDatabase("Add new shop client");
+
             return HttpStatus.NO_CONTENT;
         }
         else
@@ -86,6 +93,7 @@ public class ShopClientService {
         shopClients.forEach(shopClient -> {
             shopClientRepository.deleteById(shopClient.getId());
         });
+        this.logsApplication.SaveLogToDatabase("Delete shop clients");
 
         return HttpStatus.NO_CONTENT;
     }

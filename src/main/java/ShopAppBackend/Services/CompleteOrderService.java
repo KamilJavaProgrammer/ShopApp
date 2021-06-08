@@ -2,6 +2,7 @@ package ShopAppBackend.Services;
 
 
 import ShopAppBackend.Entities.CompleteOrder;
+import ShopAppBackend.Logs.LogsApplication;
 import ShopAppBackend.Repositories.*;
 import ShopAppBackend.Repositories.ShopClientRepository;
 import com.auth0.jwt.JWT;
@@ -37,6 +38,7 @@ public class CompleteOrderService {
    private final  BusinessRepo businessRepo;
    private final InvoiceService invoiceService;
    private final UserRepo userRepo;
+   private final LogsApplication logsApplication;
 
 
 
@@ -44,7 +46,7 @@ public class CompleteOrderService {
     public CompleteOrderService(CompleteOrderRepository completeOrderRepository, ShopClientRepository shopClientRepository,
                                 ProductBasketRepo productBasketRepo, ModelMapper modelMapper, InvoiceRepo invoiceRepo,
                                 AddressRepo addressRepo, BusinessRepo businessRepo, InvoiceService invoiceService,
-                                UserRepo userRepo) {
+                                UserRepo userRepo,LogsApplication logsApplication) {
 
         this.completeOrderRepository = completeOrderRepository;
         this.shopClientRepository = shopClientRepository;
@@ -55,6 +57,7 @@ public class CompleteOrderService {
         this.businessRepo = businessRepo;
         this.invoiceService = invoiceService;
         this.userRepo = userRepo;
+        this.logsApplication = logsApplication;
     }
 
 
@@ -173,7 +176,8 @@ public class CompleteOrderService {
 
             }
 
-        completeOrderRepository.save(completeOrder);
+            completeOrderRepository.save(completeOrder);
+            logsApplication.SaveLogToDatabase("Client" + completeOrder.getShopclient().getName() + "take new order");
         return null;
    }
 

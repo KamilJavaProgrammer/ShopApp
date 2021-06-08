@@ -2,6 +2,8 @@ package ShopAppBackend.Services;
 
 
 import ShopAppBackend.Entities.Business;
+import ShopAppBackend.Logs.LogsApplication;
+import ShopAppBackend.Repositories.AddressRepo;
 import ShopAppBackend.Repositories.BusinessRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,11 +17,15 @@ public class BusinessService {
 
     private final BusinessRepo businessRepo;
     private final AddressService addressService;
+    private final LogsApplication logsApplication;
+
+
 
     @Autowired
-    public BusinessService(BusinessRepo businessRepo, AddressService addressService) {
+    public BusinessService(BusinessRepo businessRepo, AddressService addressService, LogsApplication logsApplication) {
         this.businessRepo = businessRepo;
         this.addressService = addressService;
+        this.logsApplication = logsApplication;
     }
 
 
@@ -34,6 +40,7 @@ public class BusinessService {
         Business business = new Business();
         business.setAddress(addressService.CreateNewAddress("Rozliczeniowy"));
         businessRepo.save(business);
+        logsApplication.SaveLogToDatabase("Create new Business");
         return business;
     }
 

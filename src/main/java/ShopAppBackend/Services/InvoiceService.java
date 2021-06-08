@@ -1,6 +1,7 @@
 package ShopAppBackend.Services;
 import ShopAppBackend.Entities.Invoice;
 import ShopAppBackend.Entities.Product;
+import ShopAppBackend.Logs.LogsApplication;
 import ShopAppBackend.Repositories.ProductRepo;
 import ShopAppBackend.Repositories.InvoiceRepo;
 import com.lowagie.text.DocumentException;
@@ -41,10 +42,12 @@ public class InvoiceService {
     private final ModelMapper modelMapper;
     private final CompleteOrderRepository completeOrderRepository;
     private final UserService userService;
+    private final LogsApplication logsApplication;
+
 
 
     @Autowired
-    public InvoiceService(InvoiceRepo invoiceRepo, BusinessRepo businessRepo, JavaMailSender javaMailSender, ProductRepo productRepo, ModelMapper modelMapper, CompleteOrderRepository completeOrderRepository,UserService userService) {
+    public InvoiceService(LogsApplication logsApplication,InvoiceRepo invoiceRepo, BusinessRepo businessRepo, JavaMailSender javaMailSender, ProductRepo productRepo, ModelMapper modelMapper, CompleteOrderRepository completeOrderRepository,UserService userService) {
         this.invoiceRepo = invoiceRepo;
         this.businessRepo = businessRepo;
         this.javaMailSender = javaMailSender;
@@ -52,6 +55,8 @@ public class InvoiceService {
         this.modelMapper = modelMapper;
         this.completeOrderRepository = completeOrderRepository;
         this.userService = userService;
+        this.logsApplication = logsApplication;
+
     }
 
 
@@ -276,6 +281,7 @@ public class InvoiceService {
                 mimeMessageHelper.addAttachment("Faktura Vat",file,"application/pdf");
                 mimeMessageHelper.setText("Dziękujemy za zakupy w firmie CafeKam.W załączniku przesyłamy fakturę Vat", false);
                 javaMailSender.send(mimeMessage);
+                this.logsApplication.SaveLogToDatabase("Send E-mail to" + email);
     }
 
 

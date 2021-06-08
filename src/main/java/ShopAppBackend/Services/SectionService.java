@@ -6,6 +6,7 @@ import ShopAppBackend.Entities.Section;
 import ShopAppBackend.Entities.SectionCategory;
 import ShopAppBackend.Exceptions.ArticleLineNotFoundException;
 import ShopAppBackend.Exceptions.SectionNotFoundException;
+import ShopAppBackend.Logs.LogsApplication;
 import ShopAppBackend.Repositories.SectionCategoryRepository;
 import ShopAppBackend.Entities.SectionSubCategory;
 import ShopAppBackend.Repositories.SectionSubCategoryRepository;
@@ -25,13 +26,15 @@ public class SectionService {
     private final SectionSubCategoryRepository sectionSubCategoryRepository;
     private final SectionCategoryRepository sectionCategoryRepository;
     private final SectionRepository sectionRepository;
+    private final LogsApplication logsApplication;
 
 
     @Autowired
-    public SectionService(SectionSubCategoryRepository sectionSubCategoryRepository, SectionCategoryRepository sectionCategoryRepository, SectionRepository sectionRepository) {
+    public SectionService(LogsApplication logsApplication,SectionSubCategoryRepository sectionSubCategoryRepository, SectionCategoryRepository sectionCategoryRepository, SectionRepository sectionRepository) {
         this.sectionSubCategoryRepository = sectionSubCategoryRepository;
         this.sectionCategoryRepository = sectionCategoryRepository;
         this.sectionRepository = sectionRepository;
+        this.logsApplication = logsApplication;
     }
 
     public List<Section> GetAllSectionsFromDatabase() {
@@ -72,6 +75,7 @@ public class SectionService {
             sectionInstant.setName(section.getName());
             sectionInstant.setSectionCategoriesList(sectionCategories);
             sectionRepository.save(sectionInstant);
+            this.logsApplication.SaveLogToDatabase("Add new Menu section");
             return HttpStatus.NO_CONTENT;
 
         }
