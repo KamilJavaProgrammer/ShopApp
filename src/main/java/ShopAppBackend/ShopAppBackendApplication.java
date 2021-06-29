@@ -31,20 +31,20 @@ public class ShopAppBackendApplication {
 	@Bean
 	public ModelMapper getModelMapper(){
 		ModelMapper modelMapper = new ModelMapper();
-//		modelMapper.addMappings(new PropertyMap<ProductEntity, ProductDTO>() {
-//			@Override
-//			protected void configure() {
-//				map().setName(source.getName());
-//				map().setModel(source.getModel());
-//				map().setNumberOfItems(source.getNumberOfItems());
-//				map().setPathToFile(source.getPathToFile());
-//				map().setPrice(source.getPrice());
-//				map().setTechnicalData(source.getTechnicalData());
-//				map().setState(source.getState());
-//
-//			}
-//
-//		});
+		modelMapper.addMappings(new PropertyMap<ProductEntity, ProductDTO>() {
+			@Override
+			protected void configure() {
+				map().setName(source.getName());
+				map().setModel(source.getModel());
+				map().setNumberOfItems(source.getNumberOfItems());
+				map().setPathToFile(source.getPathToFile());
+				map().setPrice(source.getPrice());
+				map().setTechnicalData(source.getTechnicalData());
+				map().setState(source.getState());
+
+			}
+
+		});
 
 		modelMapper.addMappings(new PropertyMap<CompleteOrder, CompleteOrderDTO>() {
 
