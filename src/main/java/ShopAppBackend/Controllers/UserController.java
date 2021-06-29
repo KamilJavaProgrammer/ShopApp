@@ -26,7 +26,7 @@ import java.util.List;
 @RequestMapping("/users")
 @Validated
 
-public class UserController  {
+public class UserController   {
 
     private final UserService userService;
     private final UserRepo userRepo;

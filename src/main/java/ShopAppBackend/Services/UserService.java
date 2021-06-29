@@ -45,7 +45,7 @@ public class UserService  {
 
 
     @Autowired
-    public UserService(@Value("${jwt.secret}")String passwordJWT, @Value("${jwt.token.expirationTime}") long expirationTime,
+    public UserService (@Value("${jwt.secret}")String passwordJWT, @Value("${jwt.token.expirationTime}") long expirationTime,
                        UserRepo userRepo, JavaMailSender javaMailSender, PasswordEncoder passwordEncoder,
                        ModelMapper modelMapper, ObjectMapper objectMapper,
                        ShopClientService shopClientService,
