@@ -24,7 +24,7 @@ public class Product implements Comparable<Product> {
     private String manufacturer;
     private String serialNumber;
     private String model;
-    private String productPrice;
+    private double productPrice;
     private String pathToFile;
     private Integer numberOfItems;
     private String location;
@@ -84,18 +84,18 @@ public class Product implements Comparable<Product> {
     }
 
 
-    public int compareToPrice(Product o) {
-        if(Double.parseDouble(this.productPrice) > Double.parseDouble(o.getProductPrice()))
-        {
-           return 1;
-        }
-
-        else if(Double.parseDouble(this.productPrice) < Double.parseDouble(o.getProductPrice()))
-        {
-            return -1;
-        }
-        return 0;
-    }
+//    public int compareToPrice(Product o) {
+//        if(Double.parseDouble(this.productPrice) > Double.parseDouble(o.getProductPrice()))
+//        {
+//           return 1;
+//        }
+//
+//        else if(Double.parseDouble(this.productPrice) < Double.parseDouble(o.getProductPrice()))
+//        {
+//            return -1;
+//        }
+//        return 0;
+//    }
 }
 
 

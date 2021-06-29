@@ -7,7 +7,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 
@@ -18,11 +20,14 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
 
 @Configuration
+//@EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 
     private final String secret;
     private final UserDetailsServiceImpl userDetailsServiceimpl;
+
+
 
     @Autowired
     public SecurityConfiguration(@Value("${jwt.secret}") String secret, UserDetailsServiceImpl userDetailsServiceimpl) {
@@ -48,6 +53,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 antMatchers("/users/auth").authenticated().
                 antMatchers("/socket").authenticated().
                 antMatchers("/topic").authenticated().
+
+                antMatchers(HttpMethod.DELETE,"/articleLine/{id}").hasAuthority("ADMIN").
+                antMatchers(HttpMethod.POST,"/articleLine").hasAuthority("ADMIN").
+                antMatchers(HttpMethod.GET,"/articleLine").permitAll().
+
+                antMatchers(HttpMethod.GET,"/sections").permitAll().
+                antMatchers(HttpMethod.POST,"/sections").hasAuthority("ADMIN").
+                antMatchers(HttpMethod.DELETE,"/sections/{id}").hasAuthority("ADMIN").
+
                 antMatchers(HttpMethod.POST,"/users/password").permitAll().
                 antMatchers(HttpMethod.PATCH,"/users/password").authenticated().
                 antMatchers(HttpMethod.GET,"image/{name}").permitAll().
@@ -62,15 +76,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 antMatchers(HttpMethod.DELETE,"/shopClients").hasAuthority("ADMIN").
                 antMatchers(HttpMethod.PATCH,"/shopClients").authenticated().
                 antMatchers(HttpMethod.PATCH,"/serviceClients").authenticated().
-                antMatchers(HttpMethod.GET,"/sections").permitAll().
-                antMatchers(HttpMethod.POST,"/sections").hasAuthority("ADMIN").
-                antMatchers(HttpMethod.DELETE,"/sections/{id}").hasAuthority("ADMIN").
-                antMatchers(HttpMethod.GET,"/products/all").authenticated().
+//                antMatchers(HttpMethod.GET,"/products/all").authenticated().
+                antMatchers(HttpMethod.GET,"/products/all").hasAuthority("ADMIN").
+
                 antMatchers(HttpMethod.GET,"/products/parts").hasAuthority("ADMIN").
                 antMatchers(HttpMethod.DELETE,"/products").hasAuthority("ADMIN").
                 antMatchers(HttpMethod.GET,"/products/name/{page}").permitAll().
                 antMatchers(HttpMethod.GET,"/products/{id}").permitAll().
-                antMatchers(HttpMethod.DELETE,"/products/{id}").hasAuthority("ADMIN").
+
+//                antMatchers(HttpMethod.DELETE,"/products/{id}").hasAuthority("ADMIN").
+                antMatchers(HttpMethod.DELETE,"/products/{id}").permitAll().
+
                 antMatchers(HttpMethod.PATCH,"/products/{id}").hasAuthority("ADMIN").
                 antMatchers(HttpMethod.POST,"/products/export").hasAuthority("ADMIN").
                 antMatchers(HttpMethod.GET,"/products/parcel").authenticated().
@@ -88,9 +104,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 antMatchers(HttpMethod.GET,"/orders/all").hasAuthority("ADMIN").
                 antMatchers(HttpMethod.GET,"/categories").permitAll().
                 antMatchers(HttpMethod.GET,"/businesses").hasAuthority("ADMIN").
-                antMatchers(HttpMethod.DELETE,"/articleLine/{id}").hasAuthority("ADMIN").
-                antMatchers(HttpMethod.POST,"/articleLine").hasAuthority("ADMIN").
-                antMatchers(HttpMethod.GET,"/articleLine").permitAll().
                 antMatchers(HttpMethod.PUT,"/messages").authenticated().
                 antMatchers(HttpMethod.PATCH,"/messages").authenticated()
                 .and()

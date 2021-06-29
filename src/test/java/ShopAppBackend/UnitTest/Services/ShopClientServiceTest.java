@@ -49,14 +49,14 @@ public class ShopClientServiceTest {
         Assertions.assertThrows(IllegalArgumentException.class,()->shopClientService.DeleteShopClientById(id));
     }
 
-//    @Test
-//    public void GetOneShopClientFromDatabase_idsEquals_resultEquals() throws ShopClientNotFound {
-//
-//        Mockito.when(shopClient.getId()).thenReturn(1L);
-//        Mockito.when(shopClientRepository.findById(1L)).thenReturn(Optional.of(shopClient));
-//         var result  = shopClientService.GetOneShopClientFromDatabase(1L);
-//         Assertions.assertEquals(result.get().getId(),1L);
-//    }
+    @Test
+    public void GetOneShopClientFromDatabase_idsEquals_resultEquals() throws ShopClientNotFound {
+
+        Mockito.when(shopClient.getId()).thenReturn(1L);
+        Mockito.when(shopClientRepository.findById(1L)).thenReturn(Optional.of(shopClient));
+         var result  = shopClientService.GetOneShopClientFromDatabase(1L);
+         Assertions.assertEquals(result.get().getId(),1L);
+    }
 
     @Test
     public void GetOneShopClientFromDatabase_idsEquals_throwsShopClientNotFoundException() throws ShopClientNotFound {

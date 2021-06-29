@@ -37,7 +37,6 @@ public class UserService  {
     private final String passwordJWT;
     private final UserRepo userRepo;
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
-    private final JavaMailSender javaMailSender;
     private final PasswordEncoder passwordEncoder;
     private final ShopClientService shopClientService;
     private final ModelMapper modelMapper;
@@ -46,7 +45,7 @@ public class UserService  {
 
     @Autowired
     public UserService(@Value("${jwt.secret}")String passwordJWT, @Value("${jwt.token.expirationTime}") long expirationTime,
-                       UserRepo userRepo, JavaMailSender javaMailSender, PasswordEncoder passwordEncoder,
+                       UserRepo userRepo, PasswordEncoder passwordEncoder,
                        ModelMapper modelMapper, ObjectMapper objectMapper,
                        ShopClientService shopClientService,
                        LogsApplication logsApplication) {
@@ -54,7 +53,6 @@ public class UserService  {
         this.expirationTime = expirationTime;
         this.passwordJWT = passwordJWT;
         this.userRepo = userRepo;
-        this.javaMailSender = javaMailSender;
         this.passwordEncoder = passwordEncoder;
         this.modelMapper = modelMapper;
         this.objectMapper = objectMapper;
@@ -64,10 +62,11 @@ public class UserService  {
 
 
 
-    @Transactional
-    public Response RegistrationUser(UserDto userDto, Mailing mailing)throws MessagingException,IOException {
 
-                 User user = objectMapper.convertValue(userDto,User.class);
+    @Transactional
+    public Response RegistrationUser(UserDto userDto, Mailing mailing)throws IOException {
+
+        User user = objectMapper.convertValue(userDto,User.class);
 
         try {
             Response response = new Response();
@@ -86,17 +85,15 @@ public class UserService  {
                     user.setPassword(encodedPassword);
                     userRepo.save(user);
                     logsApplication.SaveLogToDatabase("Add User of email" + " " + user.getEmail());
-                    mailing.Mail();
-                         response.setMessage("OK");
-                         response.setStatus(201);
-                         return response;
+//                    mailing.Mail();
+                    response.setMessage("OK");
+                    response.setStatus(201);
                 }
                 else {
                     logger.warn("Login exists");
                     logsApplication.SaveLogToDatabase("Login Exists");
                     response.setMessage("Login Exists");
                     response.setStatus(200);
-                    return response;
                 }
             }
             else {
@@ -104,16 +101,15 @@ public class UserService  {
                 logsApplication.SaveLogToDatabase("Email Exists");
                 response.setMessage("Email exists");
                 response.setStatus(200);
-                return response;
             }
+            return response;
         }
-        catch (NullPointerException | InterruptedException e)
+        catch (NullPointerException  e)
         {
             logger.warn("User is null");
         }
         return null;
     }
-
 
 
     public Response VerifyCode(UserDto userDto) throws IOException{

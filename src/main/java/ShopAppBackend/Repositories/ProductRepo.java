@@ -28,8 +28,15 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
     @Query(value = "SELECT DISTINCT  * FROM products where (product_category like %:name% or " +
                    "product_sub_category like %:name% or product_name like %:name%) and product_price between :minPrice and :maxPrice",nativeQuery = true)
        List<Product> findAllByCategory12(String name, Pageable pageable,int minPrice,int maxPrice);
+//
 
-      Long countByProductSubCategory(String productSubCategory);
+       @Query(value = "Select distinct COUNT(*) FROM products where (product_category like %:name% or " +
+            "product_sub_category like %:name% or product_name like %:name%) and product_price between :minPrice and :maxPrice",nativeQuery = true)
+    Integer countRecords(String name,int minPrice,int maxPrice);
+
+
+
+    Long countByProductSubCategory(String productSubCategory);
       Long countByManufacturer(String model);
 
       Integer countAllByCategory1(Category category);

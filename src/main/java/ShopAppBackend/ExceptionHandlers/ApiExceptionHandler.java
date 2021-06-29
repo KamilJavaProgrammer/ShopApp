@@ -20,7 +20,7 @@ public class ApiExceptionHandler  extends ResponseEntityExceptionHandler {
     }
 
 
-    @ExceptionHandler({DataNotFoundException.class, ArticleLineNotFoundException.class, SectionNotFoundException.class})
+    @ExceptionHandler({ProductNotFound.class,DataNotFoundException.class, ArticleLineNotFoundException.class, SectionNotFoundException.class})
     public ResponseEntity<Object> handleWebExceptionMongo(RuntimeException e, WebRequest webRequest) {
 
         return handleExceptionInternal(e,e.getMessage(),HttpHeaders.EMPTY,HttpStatus.NOT_FOUND,webRequest);

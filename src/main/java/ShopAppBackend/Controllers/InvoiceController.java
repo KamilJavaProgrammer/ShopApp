@@ -15,7 +15,7 @@ import java.sql.SQLException;
 
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*", allowCredentials = "true")
 @RequestMapping("/invoices")
 @Validated
 public class InvoiceController {

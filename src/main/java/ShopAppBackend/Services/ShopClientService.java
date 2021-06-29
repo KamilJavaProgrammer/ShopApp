@@ -56,7 +56,6 @@ public class ShopClientService {
 
     public List<ShopClient> GetAllClient(){
         List<ShopClient> clients = shopClientRepository.findAll();
-        clients.sort(ShopClient::compareTo);
         return clients;
     }
 

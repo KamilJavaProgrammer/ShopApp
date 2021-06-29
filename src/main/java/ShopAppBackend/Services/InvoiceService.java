@@ -12,8 +12,8 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+//import org.springframework.mail.javamail.JavaMailSender;
+//import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import ShopAppBackend.Repositories.BusinessRepo;
@@ -21,8 +21,8 @@ import ShopAppBackend.Entities.Company;
 import ShopAppBackend.Entities.CompleteOrder;
 import ShopAppBackend.Repositories.CompleteOrderRepository;
 import ShopAppBackend.Entities.ProductBasket;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+//import javax.mail.MessagingException;
+//import javax.mail.internet.MimeMessage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,7 +37,7 @@ public class InvoiceService {
 
     private final InvoiceRepo invoiceRepo;
     private final BusinessRepo businessRepo;
-    private final JavaMailSender javaMailSender;
+//    private final JavaMailSender javaMailSender;
     private final ProductRepo productRepo;
     private final ModelMapper modelMapper;
     private final CompleteOrderRepository completeOrderRepository;
@@ -47,10 +47,10 @@ public class InvoiceService {
 
 
     @Autowired
-    public InvoiceService(LogsApplication logsApplication,InvoiceRepo invoiceRepo, BusinessRepo businessRepo, JavaMailSender javaMailSender, ProductRepo productRepo, ModelMapper modelMapper, CompleteOrderRepository completeOrderRepository,UserService userService) {
+    public InvoiceService(LogsApplication logsApplication,InvoiceRepo invoiceRepo, BusinessRepo businessRepo, ProductRepo productRepo, ModelMapper modelMapper, CompleteOrderRepository completeOrderRepository,UserService userService) {
         this.invoiceRepo = invoiceRepo;
         this.businessRepo = businessRepo;
-        this.javaMailSender = javaMailSender;
+//        this.javaMailSender = javaMailSender;
         this.productRepo = productRepo;
         this.modelMapper = modelMapper;
         this.completeOrderRepository = completeOrderRepository;
@@ -271,18 +271,18 @@ public class InvoiceService {
         }
 
 
-    public void SendInvoiceToClientEmail(String email,String fileName) throws MessagingException {
-                        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-                MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-                mimeMessageHelper.setTo(email);
-                mimeMessageHelper.setSubject("PDF");
-                FileSystemResource file = new FileSystemResource(
-                        new File("C:/Rozliczenia/" + fileName + ".pdf"));
-                mimeMessageHelper.addAttachment("Faktura Vat",file,"application/pdf");
-                mimeMessageHelper.setText("Dziękujemy za zakupy w firmie CafeKam.W załączniku przesyłamy fakturę Vat", false);
-                javaMailSender.send(mimeMessage);
-                this.logsApplication.SaveLogToDatabase("Send E-mail to" + email);
-    }
+//    public void SendInvoiceToClientEmail(String email,String fileName) throws MessagingException {
+//                        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+//                MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+//                mimeMessageHelper.setTo(email);
+//                mimeMessageHelper.setSubject("PDF");
+//                FileSystemResource file = new FileSystemResource(
+//                        new File("C:/Rozliczenia/" + fileName + ".pdf"));
+//                mimeMessageHelper.addAttachment("Faktura Vat",file,"application/pdf");
+//                mimeMessageHelper.setText("Dziękujemy za zakupy w firmie CafeKam.W załączniku przesyłamy fakturę Vat", false);
+//                javaMailSender.send(mimeMessage);
+//                this.logsApplication.SaveLogToDatabase("Send E-mail to" + email);
+//    }
 
 
 

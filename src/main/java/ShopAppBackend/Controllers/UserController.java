@@ -3,6 +3,7 @@ package ShopAppBackend.Controllers;
 import ShopAppBackend.Entities.User;
 import ShopAppBackend.DTOs.UserDto;
 import ShopAppBackend.Exceptions.UserNotFoundException;
+import ShopAppBackend.Maling.AmazonSESSample;
 import ShopAppBackend.Repositories.UserRepo;
 import ShopAppBackend.Services.UserService;
 import org.apache.coyote.Response;
@@ -14,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+//import javax.mail.MessagingException;
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
@@ -22,7 +24,7 @@ import java.util.List;
 
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*", allowCredentials = "true")
 @RequestMapping("/users")
 @Validated
 
@@ -31,18 +33,23 @@ public class UserController  {
     private final UserService userService;
     private final UserRepo userRepo;
     private final static String SUBJECT = "Kod weryfikacyjny";
+    private final  AmazonSESSample amazonSESSample;
+
 
     @Autowired
-    public UserController(UserService userService, UserRepo userRepo) {
+    public UserController(UserService userService, UserRepo userRepo, AmazonSESSample amazonSESSample) {
         this.userService = userService;
         this.userRepo = userRepo;
+        this.amazonSESSample = amazonSESSample;
     }
+
 
 
    @PostMapping("/registration")
    public ResponseEntity<Response> RegistrationUser(@Valid @RequestBody UserDto userDto) throws MessagingException, IOException {
          return ResponseEntity.ok(userService.RegistrationUser(userDto, () -> userService.SendEmail(userDto.getEmail(),SUBJECT,userRepo.findByUsername(userDto.getUsername()).getCodeVerification(),false)));
    }
+
 
     @PatchMapping("/verification")
     public ResponseEntity<Response> VerifyCode(@RequestBody UserDto userDto ) throws IOException {
@@ -60,11 +67,11 @@ public class UserController  {
     }
 
 
-    @PostMapping("/password")
-    public ResponseEntity<HttpStatus> SendCodeForChangePassword(@RequestBody @Email String email) throws MessagingException, IOException, InterruptedException {
-
-        return ResponseEntity.ok(userService.SendCodeForChangePassword(email));
-  }
+//    @PostMapping("/password")
+//    public ResponseEntity<HttpStatus> SendCodeForChangePassword(@RequestBody @Email String email) throws MessagingException, IOException, InterruptedException {
+//
+//        return ResponseEntity.ok(userService.SendCodeForChangePassword(email));
+//  }
 
    @GetMapping("/auth")
     public ResponseEntity<UserDto> GetUser(@AuthenticationPrincipal UsernamePasswordAuthenticationToken user) throws UserNotFoundException, IOException {
