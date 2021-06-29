@@ -48,10 +48,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
 
         String token = request.getHeader(TOKEN_HEADER);
-        System.out.println("Token to" + token);
-        System.out.println("as to" + token);
-        System.out.println("asas to" + token);
-        System.out.println("Toasken to" + token);
         if (token != null && token.startsWith(TOKEN_PREFIX)) {
             String userName = JWT.require(Algorithm.HMAC256(secret))
                     .build()
